@@ -1,0 +1,42 @@
+apiVersion: v2
+name: vacp
+description: Verified AI Communication Protocol - Production-ready Helm chart for secure, auditable AI agent communication
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+kubeVersion: ">=1.25.0-0"
+
+keywords:
+  - ai
+  - security
+  - compliance
+  - audit
+  - hipaa
+  - blockchain
+  - api-gateway
+
+home: https://github.com/example/vacp
+sources:
+  - https://github.com/example/vacp
+
+maintainers:
+  - name: VACP Team
+    email: security@example.com
+
+dependencies:
+  # Optional PostgreSQL dependency
+  - name: postgresql
+    version: "13.x.x"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  # Optional Redis dependency for caching/rate limiting
+  - name: redis
+    version: "18.x.x"
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+
+annotations:
+  artifacthub.io/category: security
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/containsSecurityUpdates: "false"

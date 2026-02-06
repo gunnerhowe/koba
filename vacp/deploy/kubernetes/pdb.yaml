@@ -1,0 +1,19 @@
+---
+# VACP Pod Disruption Budget
+# Ensures minimum availability during voluntary disruptions
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: vacp
+  namespace: vacp
+  labels:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: availability
+spec:
+  # At least 2 pods must be available at all times
+  minAvailable: 2
+  # Alternative: maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vacp
+      app.kubernetes.io/component: api-server

@@ -1,0 +1,52 @@
+---
+# VACP ConfigMap
+# Non-sensitive configuration values
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vacp-config
+  namespace: vacp
+  labels:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: config
+data:
+  # Server configuration
+  VACP_HOST: "0.0.0.0"
+  VACP_PORT: "8000"
+  VACP_WORKERS: "4"
+  VACP_LOG_LEVEL: "INFO"
+  VACP_LOG_FORMAT: "json"
+
+  # Database configuration (connection string in secret)
+  VACP_DB_POOL_SIZE: "10"
+  VACP_DB_MAX_OVERFLOW: "20"
+  VACP_DB_POOL_TIMEOUT: "30"
+
+  # Rate limiting
+  VACP_RATE_LIMIT_REQUESTS: "100"
+  VACP_RATE_LIMIT_WINDOW: "60"
+
+  # Circuit breaker
+  VACP_CIRCUIT_BREAKER_THRESHOLD: "5"
+  VACP_CIRCUIT_BREAKER_TIMEOUT: "30"
+
+  # Blockchain anchoring
+  VACP_BLOCKCHAIN_ENABLED: "true"
+  VACP_BLOCKCHAIN_BACKEND: "hedera"
+  VACP_HEDERA_NETWORK: "mainnet"
+
+  # Audit logging
+  VACP_AUDIT_ENABLED: "true"
+  VACP_AUDIT_RETENTION_DAYS: "365"
+
+  # OpenTelemetry
+  OTEL_SERVICE_NAME: "vacp"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.observability:4317"
+  OTEL_TRACES_SAMPLER: "parentbased_traceidratio"
+  OTEL_TRACES_SAMPLER_ARG: "0.1"
+
+  # Vault configuration (address, token in secret)
+  VAULT_ADDR: "http://vault.vault:8200"
+  VAULT_MOUNT_POINT: "secret"
+  VAULT_AUTH_METHOD: "kubernetes"
+  VAULT_AUTH_ROLE: "vacp"

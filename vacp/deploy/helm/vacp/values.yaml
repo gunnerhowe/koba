@@ -1,0 +1,317 @@
+# VACP Helm Chart Values
+# Full documentation: https://github.com/example/vacp/blob/main/docs/deployment.md
+
+# -- Number of replicas
+replicaCount: 3
+
+# Image configuration
+image:
+  # -- Container image repository
+  repository: vacp/api-server
+  # -- Container image pull policy
+  pullPolicy: IfNotPresent
+  # -- Container image tag (defaults to Chart appVersion)
+  tag: ""
+
+# -- Image pull secrets for private registries
+imagePullSecrets: []
+
+# -- Override the chart name
+nameOverride: ""
+# -- Override the full name
+fullnameOverride: ""
+
+# Service Account configuration
+serviceAccount:
+  # -- Create a service account
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- Service account name (auto-generated if not set)
+  name: ""
+
+# Pod annotations
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10000
+  runAsGroup: 10000
+  fsGroup: 10000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# Service configuration
+service:
+  # -- Service type (ClusterIP, NodePort, LoadBalancer)
+  type: ClusterIP
+  # -- Service port
+  port: 80
+  # -- Container port
+  targetPort: 8000
+  # -- Node port (when type is NodePort)
+  nodePort: ""
+  # -- Annotations for the service
+  annotations: {}
+
+# Ingress configuration
+ingress:
+  # -- Enable ingress
+  enabled: true
+  # -- Ingress class name
+  className: nginx
+  # -- Ingress annotations
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  # -- Ingress hosts
+  hosts:
+    - host: vacp.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  # -- Ingress TLS configuration
+  tls:
+    - secretName: vacp-tls-cert
+      hosts:
+        - vacp.example.com
+
+# Resource limits and requests
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+
+# Horizontal Pod Autoscaler
+autoscaling:
+  # -- Enable autoscaling
+  enabled: true
+  # -- Minimum replicas
+  minReplicas: 3
+  # -- Maximum replicas
+  maxReplicas: 20
+  # -- Target CPU utilization percentage
+  targetCPUUtilizationPercentage: 70
+  # -- Target memory utilization percentage
+  targetMemoryUtilizationPercentage: 80
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  # -- Enable PDB
+  enabled: true
+  # -- Minimum available pods
+  minAvailable: 2
+  # -- Maximum unavailable pods (alternative to minAvailable)
+  # maxUnavailable: 1
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity rules
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: vacp
+          topologyKey: kubernetes.io/hostname
+
+# Topology spread constraints
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: vacp
+
+# Network policies
+networkPolicy:
+  # -- Enable network policies
+  enabled: true
+  # -- Ingress namespace selectors
+  ingressNamespaces:
+    - ingress-nginx
+    - istio-system
+  # -- Monitoring namespace for Prometheus
+  monitoringNamespace: monitoring
+
+# Probes configuration
+probes:
+  startup:
+    httpGet:
+      path: /health/ready
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 30
+  liveness:
+    httpGet:
+      path: /health/live
+      port: http
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readiness:
+    httpGet:
+      path: /health/ready
+      port: http
+    initialDelaySeconds: 0
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# VACP Configuration
+config:
+  # -- Server host
+  host: "0.0.0.0"
+  # -- Server port
+  port: "8000"
+  # -- Number of workers
+  workers: "4"
+  # -- Log level (DEBUG, INFO, WARNING, ERROR)
+  logLevel: "INFO"
+  # -- Log format (json, text)
+  logFormat: "json"
+
+  # Database configuration
+  database:
+    # -- Database pool size
+    poolSize: "10"
+    # -- Database max overflow
+    maxOverflow: "20"
+    # -- Database pool timeout
+    poolTimeout: "30"
+
+  # Rate limiting
+  rateLimit:
+    # -- Requests per window
+    requests: "100"
+    # -- Window size in seconds
+    window: "60"
+
+  # Circuit breaker
+  circuitBreaker:
+    # -- Failure threshold
+    threshold: "5"
+    # -- Timeout in seconds
+    timeout: "30"
+
+  # Blockchain anchoring
+  blockchain:
+    # -- Enable blockchain anchoring
+    enabled: true
+    # -- Backend type (hedera, ethereum, local)
+    backend: "hedera"
+    # -- Hedera network (mainnet, testnet, previewnet)
+    hederaNetwork: "mainnet"
+
+  # Audit logging
+  audit:
+    # -- Enable audit logging
+    enabled: true
+    # -- Retention days
+    retentionDays: "365"
+
+  # OpenTelemetry
+  otel:
+    # -- OTLP endpoint
+    endpoint: "http://otel-collector.observability:4317"
+    # -- Sampling rate (0.0 to 1.0)
+    samplingRate: "0.1"
+
+  # HashiCorp Vault
+  vault:
+    # -- Vault address
+    address: "http://vault.vault:8200"
+    # -- Auth method (token, kubernetes, approle)
+    authMethod: "kubernetes"
+    # -- Auth role
+    authRole: "vacp"
+    # -- Secret mount point
+    mountPoint: "secret"
+
+# Secrets (use external secrets in production)
+secrets:
+  # -- Create secrets (disable if using external secrets)
+  create: true
+  # -- Database URL (base64 encoded in production)
+  databaseUrl: ""
+  # -- Master key for encryption
+  masterKey: ""
+  # -- API key
+  apiKey: ""
+  # -- Hedera account ID
+  hederaAccountId: ""
+  # -- Hedera private key
+  hederaPrivateKey: ""
+  # -- Vault token (if using token auth)
+  vaultToken: ""
+  # -- AI provider API keys
+  openaiApiKey: ""
+  anthropicApiKey: ""
+  azureOpenaiApiKey: ""
+
+# External secrets (for use with External Secrets Operator)
+externalSecrets:
+  # -- Enable External Secrets
+  enabled: false
+  # -- Secret store name
+  secretStore: ""
+  # -- Secret store kind (SecretStore or ClusterSecretStore)
+  secretStoreKind: "ClusterSecretStore"
+  # -- Refresh interval
+  refreshInterval: "1h"
+  # -- Secret mappings
+  data: []
+  # - secretKey: VACP_DATABASE_URL
+  #   remoteRef:
+  #     key: vacp/database
+  #     property: url
+
+# PostgreSQL subchart configuration
+postgresql:
+  # -- Enable PostgreSQL subchart
+  enabled: false
+  auth:
+    username: vacp
+    database: vacp
+    existingSecret: ""
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# Redis subchart configuration
+redis:
+  # -- Enable Redis subchart
+  enabled: false
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: ""

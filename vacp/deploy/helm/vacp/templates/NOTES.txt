@@ -1,0 +1,104 @@
+================================================================================
+VACP - Verified AI Communication Protocol
+================================================================================
+
+Thank you for installing {{ .Chart.Name }}!
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Version: {{ .Chart.AppVersion }}
+
+--------------------------------------------------------------------------------
+GETTING STARTED
+--------------------------------------------------------------------------------
+
+1. Get the application URL:
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  https://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "vacp.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+  Watch the status with: kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "vacp.fullname" . }}
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "vacp.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.service.port }}
+{{- else if contains "ClusterIP" .Values.service.type }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "vacp.fullname" . }} 8080:{{ .Values.service.port }}
+  echo "Visit http://127.0.0.1:8080 to use VACP"
+{{- end }}
+
+2. Check the health status:
+  curl http://localhost:8080/health/ready
+
+3. View logs:
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "vacp.name" . }} -f
+
+--------------------------------------------------------------------------------
+CONFIGURATION
+--------------------------------------------------------------------------------
+
+{{- if not .Values.secrets.masterKey }}
+WARNING: No master key configured!
+Generate and set a master key:
+  python -c "import secrets; print(secrets.token_hex(32))"
+
+Then upgrade with:
+  helm upgrade {{ .Release.Name }} vacp/vacp --set secrets.masterKey=<your-key>
+{{- end }}
+
+{{- if not .Values.secrets.databaseUrl }}
+WARNING: No database URL configured!
+Set the database URL:
+  helm upgrade {{ .Release.Name }} vacp/vacp --set secrets.databaseUrl=<postgres-url>
+{{- end }}
+
+--------------------------------------------------------------------------------
+USEFUL COMMANDS
+--------------------------------------------------------------------------------
+
+# Scale the deployment
+kubectl scale deployment {{ include "vacp.fullname" . }} -n {{ .Release.Namespace }} --replicas=5
+
+# View HPA status
+kubectl get hpa {{ include "vacp.fullname" . }} -n {{ .Release.Namespace }}
+
+# View pod disruption budget
+kubectl get pdb {{ include "vacp.fullname" . }} -n {{ .Release.Namespace }}
+
+# Check network policies
+kubectl get networkpolicy -n {{ .Release.Namespace }}
+
+# View configuration
+kubectl get configmap {{ include "vacp.fullname" . }} -n {{ .Release.Namespace }} -o yaml
+
+# Restart deployment (after config change)
+kubectl rollout restart deployment {{ include "vacp.fullname" . }} -n {{ .Release.Namespace }}
+
+--------------------------------------------------------------------------------
+SECURITY NOTES
+--------------------------------------------------------------------------------
+
+1. Secrets Management:
+   - Use External Secrets Operator or Vault CSI driver in production
+   - Never commit secrets to version control
+
+2. Network Policies:
+   - Network policies are {{ if .Values.networkPolicy.enabled }}ENABLED{{ else }}DISABLED{{ end }}
+   - Review and adjust for your network topology
+
+3. Pod Security:
+   - Pods run as non-root (UID 10000)
+   - Read-only root filesystem
+   - All capabilities dropped
+
+For more information, visit: https://github.com/example/vacp
+
+================================================================================

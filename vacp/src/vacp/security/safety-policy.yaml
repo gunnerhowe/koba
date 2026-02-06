@@ -1,0 +1,50 @@
+# Safety Dependency Vulnerability Scanner Configuration
+# https://safetycli.com/
+
+# Run with: safety check --policy-file security/safety-policy.yaml
+
+version: "3.0"
+
+# Security policy settings
+security:
+  # Fail on vulnerabilities with this severity or higher
+  # Options: none, low, medium, high, critical
+  fail-on-severity: medium
+
+  # Continue scanning even if a vulnerability is found
+  continue-on-vulnerability-error: false
+
+# Scan configuration
+scan:
+  # Maximum age of vulnerability database (in hours)
+  max-db-age: 24
+
+  # Include pre-release versions in vulnerability checks
+  include-prereleases: false
+
+# Vulnerability ignore rules
+# Use sparingly and document reasons
+ignore:
+  # Example: Ignore a specific CVE (uncomment and modify as needed)
+  # CVE-2024-XXXXX:
+  #   reason: "Not exploitable in our configuration"
+  #   expires: "2025-01-01"
+
+  # Example: Ignore vulnerabilities in a specific package
+  # package-name:
+  #   reason: "Waiting for upstream fix"
+  #   expires: "2024-12-31"
+
+# Report configuration
+report:
+  # Output format: screen, json, html, bare
+  format: screen
+
+  # Include full vulnerability details
+  full-report: true
+
+# Alert configuration
+alert:
+  # Send alerts to these channels (configure in CI/CD)
+  # Possible values: slack, email, jira, github
+  channels: []

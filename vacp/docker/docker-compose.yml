@@ -1,0 +1,97 @@
+# Koba/VACP Docker Compose - Development
+# Full stack with API, PostgreSQL, and Dashboard
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # PostgreSQL Database
+  # ============================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: koba-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-koba}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-koba_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-koba}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-koba}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Koba API Server
+  # ============================================================================
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: koba-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-koba}:${POSTGRES_PASSWORD:-koba_dev_password}@db:5432/${POSTGRES_DB:-koba}
+
+      # Auth
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+
+      # Hedera (optional)
+      HEDERA_OPERATOR_ID: ${HEDERA_OPERATOR_ID:-}
+      HEDERA_OPERATOR_KEY: ${HEDERA_OPERATOR_KEY:-}
+      HEDERA_TOPIC_ID: ${HEDERA_TOPIC_ID:-}
+      HEDERA_NETWORK: ${HEDERA_NETWORK:-testnet}
+      HEDERA_SIMULATE: ${HEDERA_SIMULATE:-true}
+
+      # Anchor scheduler
+      ANCHOR_ENABLED: ${ANCHOR_ENABLED:-false}
+      ANCHOR_INTERVAL_MINUTES: ${ANCHOR_INTERVAL_MINUTES:-60}
+      ANCHOR_MIN_RECEIPTS: ${ANCHOR_MIN_RECEIPTS:-100}
+
+      # Server
+      ENVIRONMENT: development
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3001
+
+    volumes:
+      - ../vacp:/app/vacp:ro
+      - api_data:/app/vacp_data
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================================================
+  # Next.js Dashboard
+  # ============================================================================
+  dashboard:
+    build:
+      context: ../../vacp-dashboard
+      dockerfile: Dockerfile
+    container_name: koba-dashboard
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://api:8000
+      NODE_ENV: development
+    ports:
+      - "${DASHBOARD_PORT:-3000}:3000"
+
+volumes:
+  postgres_data:
+  api_data:
+
+networks:
+  default:
+    name: koba-network

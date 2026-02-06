@@ -1,0 +1,134 @@
+# Koba Unified Dockerfile
+# Single container with both backend (FastAPI) and frontend (Next.js)
+# For easy deployment and desktop app packaging
+
+# ============================================
+# Stage 1: Build Frontend
+# ============================================
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /frontend
+RUN apk add --no-cache libc6-compat
+
+# Copy frontend package files
+COPY vacp-dashboard/package.json vacp-dashboard/package-lock.json* ./
+RUN npm ci
+
+# Copy frontend source and build
+COPY vacp-dashboard/ ./
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=http://localhost:8000
+RUN npm run build
+
+# ============================================
+# Stage 2: Build Backend
+# ============================================
+FROM python:3.11-slim AS backend-builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Python dependencies from requirements.txt first (cache layer)
+WORKDIR /backend
+COPY vacp/requirements.txt ./
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy backend source preserving directory structure
+# pyproject.toml expects src/ alongside it
+COPY vacp/src ./src/
+COPY vacp/pyproject.toml ./
+RUN pip install --no-cache-dir .
+
+# ============================================
+# Stage 3: Production Runtime
+# ============================================
+FROM python:3.11-slim AS runtime
+
+# Install Node.js runtime for frontend
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    supervisor \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd -r koba && useradd -r -g koba koba
+
+# Copy Python environment from builder
+COPY --from=backend-builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Setup backend
+WORKDIR /app
+COPY --from=backend-builder /backend/src ./src
+
+# Setup frontend
+COPY --from=frontend-builder /frontend/public ./frontend/public
+COPY --from=frontend-builder /frontend/.next/standalone ./frontend/
+COPY --from=frontend-builder /frontend/.next/static ./frontend/.next/static
+
+# Copy integration plugins
+COPY vacp/integrations ./integrations
+
+# Create data directories
+RUN mkdir -p /app/data /app/logs && chown -R koba:koba /app
+
+# Supervisor configuration to run both services
+COPY <<EOF /etc/supervisor/conf.d/koba.conf
+[supervisord]
+nodaemon=true
+logfile=/app/logs/supervisord.log
+pidfile=/var/run/supervisord.pid
+
+[program:backend]
+command=/opt/venv/bin/uvicorn vacp.api.server:create_app --host 0.0.0.0 --port 8000 --factory
+directory=/app
+user=koba
+autostart=true
+autorestart=true
+stdout_logfile=/app/logs/backend.log
+stderr_logfile=/app/logs/backend_error.log
+
+[program:frontend]
+command=node /app/frontend/server.js
+directory=/app/frontend
+user=koba
+environment=NODE_ENV="production",PORT="3000",HOSTNAME="0.0.0.0",API_URL="http://localhost:8000"
+autostart=true
+autorestart=true
+stdout_logfile=/app/logs/frontend.log
+stderr_logfile=/app/logs/frontend_error.log
+EOF
+
+# Environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV VACP_ENV=production
+ENV NODE_ENV=production
+# Point backend storage to the volume-mounted /app/data
+ENV VACP_STORAGE_PATH=/app/data
+ENV VACP_DATA_DIR=/app/data
+# Default admin password for desktop/development use
+# For production deployments, override at runtime with a secure value
+ENV VACP_ADMIN_PASSWORD=admin123
+
+# Expose ports
+EXPOSE 3000 8000
+
+# Health check (check both services)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8000/health && curl -f http://localhost:3000/ || exit 1
+
+# Entrypoint: fix volume permissions then start supervisor
+# Docker volumes may be created as root; ensure koba user can write
+CMD sh -c "chown -R koba:koba /app/data /app/logs 2>/dev/null; exec /usr/bin/supervisord -c /etc/supervisor/conf.d/koba.conf"

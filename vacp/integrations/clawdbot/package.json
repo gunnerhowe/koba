@@ -1,0 +1,44 @@
+{
+  "name": "koba-governance",
+  "version": "1.0.0",
+  "description": "Koba governance plugin for ClawdBot - AI policy enforcement and audit logging",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "types": "./index.d.ts"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "clawdbot",
+    "koba",
+    "vacp",
+    "ai-governance",
+    "ai-safety",
+    "audit-logging",
+    "policy-enforcement"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourorg/koba"
+  },
+  "peerDependencies": {
+    "clawdbot": ">=2024.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  }
+}

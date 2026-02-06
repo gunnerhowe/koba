@@ -1,0 +1,72 @@
+# Production overlay for VACP
+# Usage: kubectl apply -k deploy/kubernetes/overlays/production/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: vacp-production
+
+# Base configuration
+resources:
+  - ../../
+
+# Name prefix for all resources
+namePrefix: prod-
+
+# Common labels
+commonLabels:
+  environment: production
+
+# Common annotations
+commonAnnotations:
+  deployment.kubernetes.io/revision: "1"
+
+# Image configuration
+images:
+  - name: vacp/api-server
+    newTag: "1.0.0"
+
+# Replica count patch
+replicas:
+  - name: vacp
+    count: 5
+
+# Resource patches
+patches:
+  # Increase resources for production
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: "500m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "1Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "4000m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "4Gi"
+    target:
+      kind: Deployment
+      name: vacp
+
+  # Increase HPA max replicas for production
+  - patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 5
+      - op: replace
+        path: /spec/maxReplicas
+        value: 50
+    target:
+      kind: HorizontalPodAutoscaler
+      name: vacp
+
+  # Increase PDB minimum available
+  - patch: |-
+      - op: replace
+        path: /spec/minAvailable
+        value: 3
+    target:
+      kind: PodDisruptionBudget
+      name: vacp

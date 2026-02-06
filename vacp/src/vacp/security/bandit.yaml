@@ -1,0 +1,48 @@
+# Bandit Security Scanner Configuration
+# https://bandit.readthedocs.io/en/latest/config.html
+
+# Run with: bandit -c security/bandit.yaml -r vacp/
+
+# Skip these test IDs
+skips:
+  # B101: assert_used - We use asserts in tests
+  - B101
+  # B311: random - We use secrets module for crypto, random only for non-security
+  # B324: hashlib_insecure - We use SHA256, but bandit flags MD5/SHA1 in general
+  # B608: hardcoded_sql_expressions - False positives with f-strings in ORMs
+
+# Test-specific configurations
+any_other_function_with_shell_equals_true:
+  no_shell:
+    - subprocess.Popen
+    - subprocess.call
+    - subprocess.check_call
+    - subprocess.check_output
+    - subprocess.run
+
+# Plugins to run (default: all)
+# tests:
+#   - B101
+#   - B102
+
+# Exclude paths
+exclude_dirs:
+  - tests
+  - .venv
+  - venv
+  - .git
+  - __pycache__
+  - .pytest_cache
+  - node_modules
+  - dist
+  - build
+  - .eggs
+
+# Confidence level threshold (LOW, MEDIUM, HIGH)
+# Only report issues with this confidence or higher
+assert_used:
+  skips: ["*_test.py", "*test*.py", "test_*.py"]
+
+# Severity threshold
+# LOW, MEDIUM, HIGH
+# report_severity_level: MEDIUM

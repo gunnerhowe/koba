@@ -1,0 +1,122 @@
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.whl
+.Python
+develop-eggs/
+.installed.cfg
+sdist/
+var/
+wheels/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Testing / Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Type checking / Linting
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.pytype/
+
+# ============================================
+# Node.js
+# ============================================
+node_modules/
+.npm
+.eslintcache
+.yarn-integrity
+*.tsbuildinfo
+
+# Next.js
+.next/
+out/
+
+# ============================================
+# Electron / Desktop builds
+# ============================================
+desktop-app/dist/
+
+# ============================================
+# IDE / Editors
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+
+# ============================================
+# OS files
+# ============================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# Environment & Secrets
+# ============================================
+.env
+.env.local
+.env.*.local
+!.env.example
+!vacp/.env.example
+!vacp-dashboard/.env.example
+
+# ============================================
+# Runtime data
+# ============================================
+vacp_data/
+vacp/vacp_data/
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Build artifacts & generated reports
+# ============================================
+compliance_report.json
+*.log
+
+# ============================================
+# Docker
+# ============================================
+.docker/
+
+# ============================================
+# Vercel
+# ============================================
+.vercel/
+
+# ============================================
+# Project-specific exclusions
+# ============================================
+nul
+idea.md
+.claude/settings.local.json

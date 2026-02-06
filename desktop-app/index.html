@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koba</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h1>Koba</h1>
+      </div>
+      <p class="subtitle">AI Governance Platform</p>
+    </div>
+
+    <div class="status-section">
+      <div class="status-indicator" id="status-indicator">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Checking...</span>
+      </div>
+    </div>
+
+    <!-- Update banner (hidden by default) -->
+    <div id="update-banner" class="update-banner" style="display: none;">
+      <div class="update-banner-content">
+        <div class="update-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        </div>
+        <span id="update-text">Update available!</span>
+      </div>
+      <div class="update-actions">
+        <button id="btn-update" class="btn btn-update">Update Now</button>
+        <button id="btn-dismiss" class="btn-dismiss">&times;</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="btn-toggle" class="btn btn-primary" disabled>
+        Start Koba
+      </button>
+      <button id="btn-dashboard" class="btn btn-secondary" disabled>
+        Open Dashboard
+      </button>
+    </div>
+
+    <div class="info">
+      <div class="info-row">
+        <span class="info-label">Dashboard</span>
+        <span class="info-value" id="dashboard-url">http://localhost:3000</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">API</span>
+        <span class="info-value" id="api-url">http://localhost:8000</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Koba v2.0.0</span>
+      <span class="separator">|</span>
+      <a href="https://github.com/anthropics/koba" id="link-docs" target="_blank" rel="noopener noreferrer">Documentation</a>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

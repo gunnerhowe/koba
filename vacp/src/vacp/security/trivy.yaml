@@ -1,0 +1,100 @@
+# Trivy Container/Filesystem Vulnerability Scanner Configuration
+# https://aquasecurity.github.io/trivy/
+
+# Run with: trivy fs --config security/trivy.yaml .
+# Or: trivy image --config security/trivy.yaml vacp/api-server:latest
+
+# General settings
+format: table
+exit-code: 1
+severity: CRITICAL,HIGH,MEDIUM
+ignore-unfixed: false
+
+# Scan settings
+scan:
+  # Scan for these types
+  scanners:
+    - vuln
+    - misconfig
+    - secret
+
+  # Skip these directories
+  skip-dirs:
+    - .git
+    - node_modules
+    - venv
+    - .venv
+    - __pycache__
+    - .pytest_cache
+    - dist
+    - build
+
+  # Skip these files
+  skip-files:
+    - "*.md"
+    - "*.txt"
+    - "LICENSE"
+
+# Vulnerability settings
+vulnerability:
+  # Vulnerability types to scan
+  type:
+    - os
+    - library
+
+  # Ignore vulnerabilities without fixes
+  ignore-unfixed: false
+
+# Misconfiguration settings
+misconfiguration:
+  # Run these checkers
+  scanners:
+    - dockerfile
+    - kubernetes
+    - terraform
+    - cloudformation
+
+# Secret detection settings
+secret:
+  # Enable secret scanning
+  enable-builtin-rules: true
+
+  # Custom rules file
+  # config: security/trivy-secrets.yaml
+
+# Database settings
+db:
+  # Download database from this repository
+  repository: ghcr.io/aquasecurity/trivy-db
+
+  # Skip database update if recent
+  skip-update: false
+
+  # Download Java index database
+  java-db-repository: ghcr.io/aquasecurity/trivy-java-db
+
+# Cache settings
+cache:
+  # Cache directory
+  dir: /tmp/trivy-cache
+
+  # Clear cache after scan
+  clear: false
+
+# Report settings
+report:
+  # Output format: table, json, sarif, cyclonedx, spdx
+  format: table
+
+  # Output file (empty = stdout)
+  output: ""
+
+  # Include package licenses
+  list-all-pkgs: false
+
+# Ignore vulnerabilities matching these rules
+# Uncomment and modify as needed
+# ignore:
+#   - id: CVE-2024-XXXXX
+#     reason: "Not exploitable in our configuration"
+#     expires: "2025-01-01"

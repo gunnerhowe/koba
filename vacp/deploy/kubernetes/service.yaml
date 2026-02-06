@@ -1,0 +1,73 @@
+---
+# VACP ClusterIP Service (internal)
+apiVersion: v1
+kind: Service
+metadata:
+  name: vacp
+  namespace: vacp
+  labels:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: service
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: api-server
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+  # Session affinity for consistent routing (optional)
+  sessionAffinity: None
+---
+# VACP Headless Service (for StatefulSet or direct pod access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: vacp-headless
+  namespace: vacp
+  labels:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: service-headless
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: api-server
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+      protocol: TCP
+---
+# VACP LoadBalancer Service (external access - use Ingress in production)
+apiVersion: v1
+kind: Service
+metadata:
+  name: vacp-lb
+  namespace: vacp
+  labels:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: service-lb
+  annotations:
+    # AWS NLB annotations
+    # service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    # service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    # GCP annotations
+    # cloud.google.com/neg: '{"ingress": true}'
+    # Azure annotations
+    # service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: api-server
+  ports:
+    - name: https
+      port: 443
+      targetPort: http
+      protocol: TCP
+  # Preserve client IP
+  externalTrafficPolicy: Local

@@ -1,0 +1,17 @@
+# VACP Requirements
+# Core dependencies are minimal - only standard library required
+
+# Recommended for production cryptography
+cryptography>=41.0.0
+
+# For HTTP API server
+fastapi>=0.104.0
+uvicorn>=0.24.0
+httpx>=0.25.0
+
+# For development
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+mypy>=1.6.0
+ruff>=0.1.0

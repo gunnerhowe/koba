@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vacp.fullname" . }}
+  labels:
+    {{- include "vacp.labels" . | nindent 4 }}
+data:
+  # Server configuration
+  VACP_HOST: {{ .Values.config.host | quote }}
+  VACP_PORT: {{ .Values.config.port | quote }}
+  VACP_WORKERS: {{ .Values.config.workers | quote }}
+  VACP_LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  VACP_LOG_FORMAT: {{ .Values.config.logFormat | quote }}
+
+  # Database configuration
+  VACP_DB_POOL_SIZE: {{ .Values.config.database.poolSize | quote }}
+  VACP_DB_MAX_OVERFLOW: {{ .Values.config.database.maxOverflow | quote }}
+  VACP_DB_POOL_TIMEOUT: {{ .Values.config.database.poolTimeout | quote }}
+
+  # Rate limiting
+  VACP_RATE_LIMIT_REQUESTS: {{ .Values.config.rateLimit.requests | quote }}
+  VACP_RATE_LIMIT_WINDOW: {{ .Values.config.rateLimit.window | quote }}
+
+  # Circuit breaker
+  VACP_CIRCUIT_BREAKER_THRESHOLD: {{ .Values.config.circuitBreaker.threshold | quote }}
+  VACP_CIRCUIT_BREAKER_TIMEOUT: {{ .Values.config.circuitBreaker.timeout | quote }}
+
+  # Blockchain anchoring
+  VACP_BLOCKCHAIN_ENABLED: {{ .Values.config.blockchain.enabled | quote }}
+  VACP_BLOCKCHAIN_BACKEND: {{ .Values.config.blockchain.backend | quote }}
+  VACP_HEDERA_NETWORK: {{ .Values.config.blockchain.hederaNetwork | quote }}
+
+  # Audit logging
+  VACP_AUDIT_ENABLED: {{ .Values.config.audit.enabled | quote }}
+  VACP_AUDIT_RETENTION_DAYS: {{ .Values.config.audit.retentionDays | quote }}
+
+  # OpenTelemetry
+  OTEL_SERVICE_NAME: {{ include "vacp.fullname" . | quote }}
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.config.otel.endpoint | quote }}
+  OTEL_TRACES_SAMPLER: "parentbased_traceidratio"
+  OTEL_TRACES_SAMPLER_ARG: {{ .Values.config.otel.samplingRate | quote }}
+
+  # Vault configuration
+  VAULT_ADDR: {{ .Values.config.vault.address | quote }}
+  VAULT_MOUNT_POINT: {{ .Values.config.vault.mountPoint | quote }}
+  VAULT_AUTH_METHOD: {{ .Values.config.vault.authMethod | quote }}
+  VAULT_AUTH_ROLE: {{ .Values.config.vault.authRole | quote }}

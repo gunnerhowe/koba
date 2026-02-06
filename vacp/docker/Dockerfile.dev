@@ -1,0 +1,36 @@
+# Koba/VACP Development Dockerfile
+# Hot reload enabled for development
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir watchfiles
+
+# Create data directory
+RUN mkdir -p /app/vacp_data
+
+# Environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    VACP_DATA_DIR=/app/vacp_data \
+    PORT=8000 \
+    ENVIRONMENT=development
+
+# Expose port
+EXPOSE ${PORT}
+
+# Run with hot reload
+CMD ["python", "-m", "uvicorn", "vacp.api.server:create_app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--factory"]

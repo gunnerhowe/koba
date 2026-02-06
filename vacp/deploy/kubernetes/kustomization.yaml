@@ -1,0 +1,41 @@
+# Kustomize configuration for VACP
+# Usage: kubectl apply -k deploy/kubernetes/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: vacp
+
+# Common labels applied to all resources
+commonLabels:
+  app.kubernetes.io/name: vacp
+  app.kubernetes.io/part-of: vacp-system
+
+# Resources to deploy
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - rbac.yaml
+  - deployment.yaml
+  - service.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - networkpolicy.yaml
+  - ingress.yaml
+
+# Image configuration (override in overlays)
+images:
+  - name: vacp/api-server
+    newTag: "1.0.0"
+
+# Config generation (alternative to configmap.yaml)
+# configMapGenerator:
+#   - name: vacp-config
+#     envs:
+#       - config.env
+
+# Secret generation (alternative to secret.yaml)
+# secretGenerator:
+#   - name: vacp-secrets
+#     envs:
+#       - secrets.env

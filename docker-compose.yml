@@ -1,0 +1,96 @@
+# Koba - AI Containment Platform
+# Docker Compose for local development and production deployment
+
+version: '3.8'
+
+services:
+  # Backend API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - VACP_ENV=production
+      - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
+      - HEDERA_SIMULATE=true
+      - HEDERA_OPERATOR_ID=${HEDERA_OPERATOR_ID:-}
+      - HEDERA_OPERATOR_KEY=${HEDERA_OPERATOR_KEY:-}
+      - HEDERA_TOPIC_ID=${HEDERA_TOPIC_ID:-}
+      - HEDERA_NETWORK=${HEDERA_NETWORK:-testnet}
+    volumes:
+      - koba_data:/app/vacp_data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - koba-network
+
+  # Dashboard UI
+  dashboard:
+    build:
+      context: ./vacp-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - koba-network
+
+  # Optional: PostgreSQL for production (instead of SQLite)
+  # Uncomment for production deployments
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     - POSTGRES_USER=koba
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+  #     - POSTGRES_DB=koba
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U koba"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped
+  #   networks:
+  #     - koba-network
+
+  # Optional: Redis for caching and session management
+  # Uncomment for production deployments
+  # redis:
+  #   image: redis:7-alpine
+  #   command: redis-server --appendonly yes
+  #   volumes:
+  #     - redis_data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped
+  #   networks:
+  #     - koba-network
+
+volumes:
+  koba_data:
+    driver: local
+  # postgres_data:
+  #   driver: local
+  # redis_data:
+  #   driver: local
+
+networks:
+  koba-network:
+    driver: bridge

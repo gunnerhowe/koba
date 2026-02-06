@@ -1,0 +1,106 @@
+---
+# VACP Ingress (nginx)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vacp
+  namespace: vacp
+  labels:
+    app.kubernetes.io/name: vacp
+    app.kubernetes.io/component: ingress
+  annotations:
+    # Nginx ingress controller annotations
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+    # Rate limiting at ingress level
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    nginx.ingress.kubernetes.io/limit-rpm: "1000"
+
+    # Request size limits
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+    # Timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options "DENY" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header X-XSS-Protection "1; mode=block" always;
+      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';" always;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    # cert-manager for automatic TLS
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - vacp.example.com
+        - api.vacp.example.com
+      secretName: vacp-tls-cert
+  rules:
+    - host: vacp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vacp
+                port:
+                  name: http
+    - host: api.vacp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vacp
+                port:
+                  name: http
+---
+# VACP Ingress (Istio Gateway)
+# Uncomment if using Istio service mesh
+# apiVersion: networking.istio.io/v1beta1
+# kind: Gateway
+# metadata:
+#   name: vacp-gateway
+#   namespace: vacp
+# spec:
+#   selector:
+#     istio: ingressgateway
+#   servers:
+#     - port:
+#         number: 443
+#         name: https
+#         protocol: HTTPS
+#       tls:
+#         mode: SIMPLE
+#         credentialName: vacp-tls-cert
+#       hosts:
+#         - vacp.example.com
+# ---
+# apiVersion: networking.istio.io/v1beta1
+# kind: VirtualService
+# metadata:
+#   name: vacp
+#   namespace: vacp
+# spec:
+#   hosts:
+#     - vacp.example.com
+#   gateways:
+#     - vacp-gateway
+#   http:
+#     - route:
+#         - destination:
+#             host: vacp
+#             port:
+#               number: 80

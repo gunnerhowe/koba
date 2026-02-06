@@ -1,0 +1,95 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vacp"
+version = "0.1.0"
+description = "Koba - Cryptographic AI Governance Platform"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Koba Contributors"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["ai", "security", "policy", "audit", "cryptography"]
+requires-python = ">=3.10"
+
+dependencies = [
+    "pynacl>=1.5.0",
+    "sqlalchemy>=2.0.0",
+    "cryptography>=41.0.0",
+]
+
+[project.optional-dependencies]
+server = [
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.23.0",
+    "python-multipart>=0.0.6",
+]
+cli = [
+    "click>=8.1.0",
+    "requests>=2.31.0",
+    "rich>=13.0.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.24.0",
+    "bandit>=1.7.0",
+    "safety>=2.3.0",
+    "mypy>=1.5.0",
+]
+all = [
+    "vacp[server,cli,dev]",
+]
+
+[project.scripts]
+vacp-cli = "vacp.cli.main:main"
+vacp-server = "vacp.api.server:run_server"
+
+[project.urls]
+Homepage = "https://github.com/gunnerhowe/koba"
+Documentation = "https://github.com/gunnerhowe/koba#readme"
+Repository = "https://github.com/gunnerhowe/koba"
+Issues = "https://github.com/gunnerhowe/koba/issues"
+Changelog = "https://github.com/gunnerhowe/koba/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["vacp", "vacp.api", "vacp.auth", "vacp.benchmarks", "vacp.cli", "vacp.compliance", "vacp.core", "vacp.demo", "vacp.examples", "vacp.mcp", "vacp.migrations", "vacp.monitoring", "vacp.providers", "vacp.sdk", "vacp.security", "vacp.storage", "vacp.testing", "vacp.tests", "vacp.ui"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/vacp/tests"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = false  # Disabled for SQLAlchemy compatibility
+warn_unused_configs = true
+ignore_missing_imports = true
+
+# SQLAlchemy models have typing limitations with mypy
+[[tool.mypy.overrides]]
+module = "vacp.core.database"
+disable_error_code = ["arg-type", "valid-type"]
+
+[tool.bandit]
+exclude_dirs = ["tests", "benchmarks"]
+skips = ["B101"]  # Allow assert statements in tests

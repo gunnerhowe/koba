@@ -1,0 +1,118 @@
+# Koba/VACP Docker Compose - Production
+# Production-ready configuration
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # PostgreSQL Database (Production)
+  # ============================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: koba-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-koba}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # No exposed ports in production - internal only
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  # ============================================================================
+  # Koba API Server (Production)
+  # ============================================================================
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: koba-api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-koba}
+
+      # Auth - MUST be set in production
+      JWT_SECRET: ${JWT_SECRET}
+
+      # Hedera - Production credentials
+      HEDERA_OPERATOR_ID: ${HEDERA_OPERATOR_ID}
+      HEDERA_OPERATOR_KEY: ${HEDERA_OPERATOR_KEY}
+      HEDERA_TOPIC_ID: ${HEDERA_TOPIC_ID}
+      HEDERA_NETWORK: ${HEDERA_NETWORK:-mainnet}
+      HEDERA_SIMULATE: "false"
+
+      # Anchor scheduler (Pro feature - set to "true" only with valid blockchain credentials)
+      ANCHOR_ENABLED: ${ANCHOR_ENABLED:-false}
+      ANCHOR_INTERVAL_MINUTES: ${ANCHOR_INTERVAL_MINUTES:-60}
+      ANCHOR_MIN_RECEIPTS: ${ANCHOR_MIN_RECEIPTS:-100}
+
+      # Server
+      ENVIRONMENT: production
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+    volumes:
+      - api_data:/app/vacp_data
+    networks:
+      - internal
+      - web
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+      replicas: ${API_REPLICAS:-2}
+
+  # ============================================================================
+  # Nginx Reverse Proxy
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: koba-nginx
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    networks:
+      - web
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+volumes:
+  postgres_data:
+  api_data:
+  nginx_logs:
+
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  web:
+    driver: bridge

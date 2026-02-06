@@ -1,0 +1,64 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+.eggs
+dist
+*.egg
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+.tox
+.nox
+
+# Virtual environments
+venv
+.venv
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+*.log
+*.tmp
+*.temp
+
+# Docker
+docker-compose*
+.docker
+
+# Documentation
+docs
+
+# Development
+vacp_data
+*.db
+*.sqlite
+*.sqlite3
+
+# Dashboard build artifacts (rebuilt in Docker)
+vacp-dashboard/node_modules
+vacp-dashboard/.next
+
+# Desktop app (not needed in server image)
+desktop-app/node_modules
+desktop-app/dist
+
+# Images
+images
