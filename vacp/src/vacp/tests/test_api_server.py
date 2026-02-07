@@ -13,8 +13,6 @@ Tests:
 
 import pytest
 import time
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch, MagicMock
 
 
 # Test middleware independently

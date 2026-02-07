@@ -13,13 +13,12 @@ Provides secure API key management with:
 # This module is retained for reference but should not be imported for new code.
 
 import hashlib
-import hmac
 import secrets
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
-from enum import Enum, Flag, auto
-from typing import Any, Dict, List, Optional, Set
+from enum import Flag, auto
+from typing import Any, Dict, List, Optional
 import threading
 
 

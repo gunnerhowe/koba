@@ -12,11 +12,8 @@ Tests cover:
 - Connection pooling and thread safety
 """
 
-import json
 import os
 import tempfile
-import threading
-import time
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor
 
@@ -25,7 +22,6 @@ import pytest
 from vacp.storage import (
     SQLiteBackend,
     StorageConfig,
-    StorageError,
     NotFoundError,
     DuplicateError,
     create_storage_backend,

@@ -7,16 +7,11 @@ Tests:
 - API key management
 """
 
-import pytest
-from datetime import datetime, timezone
 
 from vacp.core.tenant import (
-    TenantService,
     TenantContext,
-    Tenant,
     TenantStatus,
     TenantPlan,
-    TenantSlugExistsError,
     get_current_tenant,
     set_current_tenant,
     clear_tenant_context,

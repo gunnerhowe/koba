@@ -7,7 +7,6 @@ Tests:
 - Tenant context resolution
 """
 
-import pytest
 
 
 class TestTenantAdminAPI:

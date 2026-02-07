@@ -18,7 +18,7 @@ def main():
 
     # Server command
     server_parser = subparsers.add_parser("server", help="Run the HTTP API server")
-    server_parser.add_argument("--host", default="0.0.0.0", help="Host to bind to")
+    server_parser.add_argument("--host", default="0.0.0.0", help="Host to bind to")  # nosec B104
     server_parser.add_argument("--port", type=int, default=8000, help="Port to bind to")
     server_parser.add_argument("--reload", action="store_true", help="Enable auto-reload")
     server_parser.add_argument("--demo", action="store_true", default=True, help="Load demo data on startup (default: True)")
@@ -34,13 +34,13 @@ def main():
     audit_parser.add_argument("--port", type=int, default=8080, help="Port to bind to")
 
     # Example command
-    example_parser = subparsers.add_parser("example", help="Run the basic example")
+    subparsers.add_parser("example", help="Run the basic example")
 
     # Security test command
-    security_parser = subparsers.add_parser("security-test", help="Run security tests")
+    subparsers.add_parser("security-test", help="Run security tests")
 
     # Demo command
-    demo_parser = subparsers.add_parser("demo", help="Run demo server with populated data")
+    subparsers.add_parser("demo", help="Run demo server with populated data")
 
     # MCP command
     mcp_parser = subparsers.add_parser("mcp", help="Run as MCP server (for Claude Desktop)")

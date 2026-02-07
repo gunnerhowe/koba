@@ -5,10 +5,7 @@ These tests verify the benchmark infrastructure works correctly.
 They are NOT performance tests themselves.
 """
 
-import pytest
 import time
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch
 
 from vacp.benchmarks.framework import (
     Benchmark,

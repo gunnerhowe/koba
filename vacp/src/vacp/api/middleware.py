@@ -8,7 +8,6 @@ Production-ready middleware components:
 - Metrics collection
 """
 
-import asyncio
 import hashlib
 import time
 from collections import defaultdict
@@ -448,7 +447,7 @@ class MetricsCollector:
 
                 # Calculate bucket counts
                 for bucket in buckets:
-                    count = sum(1 for l in latencies if l <= bucket)
+                    count = sum(1 for latency in latencies if latency <= bucket)
                     lines.append(
                         f'vacp_http_request_duration_ms_bucket{{method="{method}",path="{path}",le="{bucket}"}} {count}'
                     )

@@ -9,12 +9,10 @@ Specific benchmark implementations for VACP components:
 """
 
 import gc
-import json
 import secrets
 import threading
-import time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from vacp.benchmarks.framework import (
@@ -25,7 +23,7 @@ from vacp.benchmarks.framework import (
     run_load_test,
 )
 from vacp.core.policy import PolicyEngine, PolicyBundle, PolicyRule, PolicyDecision
-from vacp.core.crypto import hash_json, generate_random_id
+from vacp.core.crypto import generate_random_id
 from vacp.storage.sqlite import SQLiteBackend
 
 

@@ -11,16 +11,14 @@ Provides systematic testing of security properties:
 This harness helps ensure the gateway correctly blocks attacks.
 """
 
-import asyncio
-import json
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
 from vacp.core.gateway import ToolGateway, ToolRequest
-from vacp.core.policy import PolicyEngine, PolicyDecision
+from vacp.core.policy import PolicyEngine
 from vacp.core.registry import ToolRegistry
 from vacp.core.crypto import generate_random_id
 
@@ -363,7 +361,7 @@ class AttackHarness:
                 tool_id="file.read",
                 parameters={
                     "path": "/allowed/path",
-                    "path": "../../../etc/passwd",  # Duplicate key
+                    "path_override": "../../../etc/passwd",  # Was duplicate "path" key
                 },
                 expected_outcome=AttackOutcome.BLOCKED,
                 severity="medium",

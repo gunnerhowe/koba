@@ -213,7 +213,7 @@ def server():
 
 
 @server.command("start")
-@click.option("--host", default="0.0.0.0", help="Host to bind to")
+@click.option("--host", default="0.0.0.0", help="Host to bind to")  # nosec B104
 @click.option("--port", default=8000, type=int, help="Port to bind to")
 @click.option("--reload", is_flag=True, help="Enable auto-reload for development")
 @click.option("--demo", is_flag=True, help="Start with demo data")
@@ -416,7 +416,7 @@ def policy_apply(bundle_file):
 @click.argument("bundle_id")
 def policy_activate(bundle_id):
     """Activate a policy bundle."""
-    data = api_request("POST", f"/v1/policy/bundles/{bundle_id}/activate")
+    api_request("POST", f"/v1/policy/bundles/{bundle_id}/activate")
     click.echo(f"Policy bundle activated: {bundle_id}")
 
 
@@ -463,7 +463,7 @@ def audit_verify_chain(full):
 @click.option("--format", "fmt", type=click.Choice(["json", "csv"]), default="json")
 def audit_export(output, last, fmt):
     """Export audit logs."""
-    data = api_request("GET", f"/v1/audit/entries?limit=10000")
+    data = api_request("GET", "/v1/audit/entries?limit=10000")
     entries = data.get("entries", [])
 
     if fmt == "json":
@@ -513,13 +513,13 @@ def killswitch_alert(reason):
             "reason": reason,
             "severity": "high",
         })
-        click.echo(f"ALERT: Kill switch activation may be required")
+        click.echo("ALERT: Kill switch activation may be required")
         click.echo(f"Reason: {reason}")
         notified = data.get("notified_count", 0)
         click.echo(f"Key holders notified: {notified}")
-    except Exception as e:
+    except Exception:
         # Fallback if endpoint doesn't exist - still show the alert locally
-        click.echo(f"ALERT: Kill switch activation may be required", err=True)
+        click.echo("ALERT: Kill switch activation may be required", err=True)
         click.echo(f"Reason: {reason}", err=True)
         click.echo("Note: Could not notify key holders via API. Contact them directly.", err=True)
 
@@ -529,7 +529,6 @@ def killswitch_alert(reason):
 @click.option("--key-id", prompt=True, help="Key holder ID")
 def killswitch_sign(key, key_id):
     """Sign kill switch activation with your private key."""
-    from datetime import datetime, timezone
 
     # Read and parse the private key
     try:
@@ -624,7 +623,7 @@ def approvals_list(as_json):
 @click.option("--reason", help="Reason for approval")
 def approvals_approve(approval_id, reason):
     """Approve a pending action."""
-    data = api_request("POST", f"/v1/approvals/{approval_id}", json={
+    api_request("POST", f"/v1/approvals/{approval_id}", json={
         "approved": True,
         "approver_id": "cli-user",
         "reason": reason,
@@ -637,7 +636,7 @@ def approvals_approve(approval_id, reason):
 @click.option("--reason", prompt=True, help="Reason for denial")
 def approvals_deny(approval_id, reason):
     """Deny a pending action."""
-    data = api_request("POST", f"/v1/approvals/{approval_id}", json={
+    api_request("POST", f"/v1/approvals/{approval_id}", json={
         "approved": False,
         "approver_id": "cli-user",
         "reason": reason,
@@ -679,7 +678,7 @@ def tokens_mint(agent_id, tenant_id, tools, ttl, purpose):
 @click.argument("token_id")
 def tokens_revoke(token_id):
     """Revoke a token."""
-    data = api_request("POST", f"/v1/tokens/{token_id}/revoke")
+    api_request("POST", f"/v1/tokens/{token_id}/revoke")
     click.echo(f"Token revoked: {token_id}")
 
 

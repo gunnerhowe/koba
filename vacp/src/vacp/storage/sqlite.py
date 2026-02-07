@@ -15,7 +15,6 @@ import sqlite3
 import threading
 import uuid
 from contextlib import contextmanager
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from queue import Queue
@@ -27,7 +26,6 @@ from vacp.storage.base import (
     ReceiptStorage,
     SessionStorage,
     BehaviorProfileStorage,
-    StorageError,
     NotFoundError,
     DuplicateError,
 )
@@ -160,7 +158,7 @@ class MerkleTree:
 
         proof = []
         # Pad to power of 2
-        original_len = len(hashes)
+        len(hashes)
         while len(hashes) & (len(hashes) - 1) != 0:
             hashes.append(hashes[-1])
 

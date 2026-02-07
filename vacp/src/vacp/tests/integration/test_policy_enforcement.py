@@ -6,8 +6,6 @@ as advertised. Not just unit tests - these test the full integration.
 """
 
 import pytest
-import asyncio
-from datetime import datetime, timezone, timedelta
 
 from vacp.core.policy import (
     PolicyEngine,

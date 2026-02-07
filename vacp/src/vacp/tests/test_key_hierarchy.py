@@ -21,14 +21,13 @@ from vacp.core.key_hierarchy import (
     KeyType,
     KeyStatus,
     KeyMetadata,
-    DerivedKey,
     KeyHierarchy,
     MasterKeySharding,
     hkdf_derive,
     get_key_hierarchy,
     initialize_key_hierarchy,
 )
-from vacp.core.crypto import verify_signature, decode_signature
+from vacp.core.crypto import verify_signature
 
 
 # ============================================================================
@@ -471,7 +470,7 @@ class TestKeyHierarchyIntegration:
 
         # Create tenant keys
         tenant1_key = hierarchy.get_tenant_signing_key("tenant_1")
-        tenant2_key = hierarchy.get_tenant_signing_key("tenant_2")
+        hierarchy.get_tenant_signing_key("tenant_2")
 
         # Sign messages
         message = b"Audit log entry"

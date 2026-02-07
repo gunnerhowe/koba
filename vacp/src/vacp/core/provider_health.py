@@ -13,9 +13,9 @@ import asyncio
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 import statistics
 
 try:
@@ -409,7 +409,7 @@ class AzureOpenAIHealthChecker(ProviderHealthChecker):
         start = time.perf_counter()
         try:
             # Azure OpenAI uses deployments endpoint
-            deployment_id = self.config.metadata.get("deployment_id", "")
+            self.config.metadata.get("deployment_id", "")
             api_version = self.config.metadata.get("api_version", "2024-02-01")
 
             url = f"{self.config.api_base_url}/openai/deployments?api-version={api_version}"

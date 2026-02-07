@@ -1229,7 +1229,7 @@ def create_default_admin(auth_service: AuthService) -> Optional[User]:
             print("\n" + "=" * 60)
             print("  DEFAULT ADMIN ACCOUNT CREATED")
             print("=" * 60)
-            print(f"  Email:    admin@koba.local")
+            print("  Email:    admin@koba.local")
             print(f"  Password: {admin_password}")
             print("=" * 60)
             print("  IMPORTANT: Change this password immediately!")

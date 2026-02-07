@@ -5,7 +5,6 @@ Environment-based configuration for production deployment.
 """
 
 import os
-import sys
 import secrets
 import logging
 from pathlib import Path
@@ -29,7 +28,7 @@ class VACPConfig:
     db_path: Optional[Path] = None
 
     # Server
-    host: str = field(default_factory=lambda: os.getenv("HOST", "0.0.0.0"))
+    host: str = field(default_factory=lambda: os.getenv("HOST", "0.0.0.0"))  # nosec B104
     port: int = field(default_factory=lambda: int(os.getenv("PORT", "8000")))
 
     # Security

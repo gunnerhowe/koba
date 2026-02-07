@@ -11,14 +11,13 @@ The registry is the authoritative source for what tools exist
 and what their expected inputs/outputs are.
 """
 
-import json
 import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
 from enum import Enum
 
-from vacp.core.crypto import hash_json, generate_random_id
+from vacp.core.crypto import hash_json
 
 
 class ToolCategory(Enum):

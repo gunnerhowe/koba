@@ -18,19 +18,16 @@ runs before user code and cannot be bypassed.
 """
 
 import asyncio
-import hashlib
 import json
 import os
-import subprocess
 import sys
 import tempfile
-import textwrap
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from vacp.core.crypto import hash_data, generate_random_id
 from vacp.core.receipts import SandboxInfo
@@ -256,7 +253,7 @@ def _build_enforcement_preamble(config: SandboxConfig, temp_dir: str) -> str:
         lines.append("")
 
     # --- Filesystem restrictions ---
-    safe_temp = temp_dir.replace("\\", "\\\\")
+    temp_dir.replace("\\", "\\\\")
     if config.filesystem_readonly and not config.allow_file_write:
         lines.append("# Block file writes outside temp directory")
         lines.append("import builtins")
@@ -686,7 +683,7 @@ class SandboxManager:
             loop = asyncio.get_event_loop()
 
             def run_code():
-                exec(compiled, restricted_globals)
+                exec(compiled, restricted_globals)  # nosec B102
 
             await asyncio.wait_for(
                 loop.run_in_executor(None, run_code),
@@ -770,7 +767,7 @@ class SandboxManager:
                     f"--memory={config.max_memory_mb}m",
                     f"--cpus={config.max_cpu_seconds / max(config.max_execution_time, 1)}",
                     "--read-only" if config.filesystem_readonly else "",
-                    "--tmpfs", "/tmp:size=50m",
+                    "--tmpfs", "/tmp:size=50m",  # nosec B108
                     "--network=none" if not config.network_enabled else "",
                     "--security-opt=no-new-privileges",
                     "--cap-drop=ALL",

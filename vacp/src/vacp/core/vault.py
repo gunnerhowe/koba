@@ -18,18 +18,13 @@ Configuration via environment variables:
 - VAULT_NAMESPACE: Vault namespace (enterprise only)
 """
 
-import asyncio
 import base64
-import json
 import logging
 import os
 import threading
-import time
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from enum import Enum
-from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 logger = logging.getLogger(__name__)
@@ -381,7 +376,7 @@ class VaultClient:
                     return data.get(key, default)
                 return data
 
-            except InvalidRequest as e:
+            except InvalidRequest:
                 # Try KV v1
                 try:
                     response = self._client.secrets.kv.v1.read_secret(

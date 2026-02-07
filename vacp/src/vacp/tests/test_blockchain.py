@@ -9,8 +9,6 @@ Tests cover:
 - Export functionality
 """
 
-import asyncio
-import base64
 import json
 import pytest
 from datetime import datetime, timezone
@@ -31,13 +29,27 @@ from vacp.core.blockchain import (
     AnchorManager,
     is_blockchain_enabled,
 )
+from vacp.core.database import DatabaseManager
 from vacp.core.merkle import SignedTreeHead
-from vacp.core.crypto import KeyPair, generate_keypair
+from vacp.core.crypto import generate_keypair
 
 
 # ============================================================================
 # Fixtures
 # ============================================================================
+
+@pytest.fixture(autouse=True)
+def _patch_get_db():
+    """Patch get_db so AnchorService/AnchorManager use an in-memory SQLite DB.
+
+    Without this, get_db() tries to open ./vacp_data/koba.db which does not
+    exist in CI environments, causing tests to fail.
+    """
+    db = DatabaseManager(database_url="sqlite:///:memory:")
+    db.create_tables()
+    with patch("vacp.core.blockchain.get_db", return_value=db):
+        yield
+    db.engine.dispose()
 
 @pytest.fixture
 def sample_tree_head():

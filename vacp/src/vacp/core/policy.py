@@ -20,18 +20,15 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from typing import (
     Any,
-    Callable,
     Dict,
     List,
     Optional,
-    Set,
     Tuple,
-    Union,
 )
 from enum import Enum
 from copy import deepcopy
 
-from vacp.core.crypto import hash_json, generate_random_id
+from vacp.core.crypto import hash_json
 
 
 class PolicyDecision(Enum):
@@ -79,7 +76,6 @@ class ResourcePattern:
                     # and rejecting known problematic patterns (nested quantifiers)
                     if len(resource) > 10000:
                         return False
-                    import signal
                     _redos_pattern = re.compile(r'(\.\*|\.\+|\.\?)\1|(\([^)]*(\*|\+)[^)]*\))(\*|\+)')
                     if _redos_pattern.search(self.pattern):
                         return False  # Reject patterns with nested quantifiers
@@ -395,9 +391,18 @@ class PolicyRule:
                 return False
 
         # Check method patterns - if rule specifies method patterns, reject
-        # requests that don't provide a method or provide a non-matching one
+        # requests that don't provide a method or provide a non-matching one.
+        # When method is not explicitly provided but the tool_name is in
+        # "category.method" dotted format, extract the last segment as the
+        # method for matching purposes.
         if self.method_patterns:
-            if not method or not any(fnmatch.fnmatch(method, p) for p in self.method_patterns):
+            effective_method = method
+            if effective_method is None and "." in tool_name:
+                # Extract the last dot-segment as a candidate method
+                effective_method = tool_name.rsplit(".", 1)[-1]
+            if not effective_method or not any(
+                fnmatch.fnmatch(effective_method, p) for p in self.method_patterns
+            ):
                 return False
 
         return True

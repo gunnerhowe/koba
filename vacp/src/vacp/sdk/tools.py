@@ -480,7 +480,8 @@ def register_tools(tools: List[Dict[str, Any]], koba_url: str = None, api_key: s
             response = requests.post(
                 f"{url}/v1/tools/register",
                 headers=headers,
-                json=tool
+                json=tool,
+                timeout=30
             )
             if response.ok:
                 registered.append(tool["id"])

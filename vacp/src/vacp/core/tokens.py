@@ -13,24 +13,18 @@ tool invocation, which are automatically revoked after use.
 """
 
 import hashlib
-import hmac
 import json
 import secrets
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 from vacp.core.crypto import (
     KeyPair,
     generate_keypair,
     sign_message,
-    verify_signature,
     encode_signature,
-    decode_signature,
-    hash_data,
-    hash_json,
     generate_random_id,
 )
 

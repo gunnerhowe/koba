@@ -15,10 +15,10 @@ from typing import Optional, Callable, Any
 from dataclasses import dataclass
 
 from .blockchain import (
-    AnchorManager, AnchorData, BlockchainAnchor,
-    HederaAnchorService, is_blockchain_enabled
+    AnchorManager, BlockchainAnchor,
+    is_blockchain_enabled
 )
-from .merkle import MerkleLog, SignedTreeHead
+from .merkle import MerkleLog
 from .database import DatabaseManager, get_db
 
 logger = logging.getLogger(__name__)

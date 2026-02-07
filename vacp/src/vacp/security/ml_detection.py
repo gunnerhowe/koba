@@ -12,14 +12,13 @@ This module complements the pattern-based detection with statistical
 and ML-based approaches for better coverage of novel attacks.
 """
 
-import hashlib
 import math
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 import threading
 
 
@@ -546,7 +545,7 @@ class MLPromptInjectionDetector:
 
             return {
                 "total_detections": len(self._detection_history),
-                "level_distribution": {l.value: level_counts.get(l, 0) for l in MLDetectionLevel},
+                "level_distribution": {level.value: level_counts.get(level, 0) for level in MLDetectionLevel},
                 "average_confidence": avg_confidence,
                 "ngram_baseline_size": self.ngram_analyzer._baseline_total,
                 "tfidf_vocab_size": len(self.tfidf_detector._vocab),

@@ -23,7 +23,6 @@ try:
     from sqlalchemy import (
         Column, String, Text, DateTime, Integer,
     )
-    from sqlalchemy.orm import Session as SQLASession
     from vacp.core.database import Base
     SQLALCHEMY_AVAILABLE = True
 except ImportError:

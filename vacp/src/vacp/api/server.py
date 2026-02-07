@@ -17,14 +17,13 @@ Provides endpoints for:
 import asyncio
 import json
 import secrets
-import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 # FastAPI imports (graceful fallback if not installed)
 try:
-    from fastapi import FastAPI, HTTPException, Request, Response, Depends, WebSocket, WebSocketDisconnect
+    from fastapi import FastAPI, HTTPException, Request, Depends, WebSocket, WebSocketDisconnect
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse, PlainTextResponse
     from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -37,12 +36,8 @@ from vacp.core.crypto import KeyPair, generate_keypair
 from vacp.core.gateway import (
     ToolGateway,
     ToolRequest,
-    ToolResponse,
-    EvaluationResult,
     ExternalExecutionRecord,
-    create_gateway,
     ApprovalRequiredError,
-    PolicyDeniedError,
 )
 from vacp.core.policy import (
     PolicyEngine,
@@ -62,13 +57,11 @@ from vacp.core.registry import (
     ToolRiskLevel,
 )
 from vacp.core.receipts import ReceiptService, SignedActionReceipt
-from vacp.core.merkle import MerkleLog, AuditableLog, MerkleProof
+from vacp.core.merkle import MerkleLog, AuditableLog
 from vacp.core.tokens import TokenService, TokenMintRequest as CoreTokenMintRequest, TokenScope
-from vacp.core.tripwire import TripwireEngine, SequenceAnalyzer
-from vacp.core.sandbox import SandboxManager, SandboxConfig
+from vacp.core.tripwire import TripwireEngine
+from vacp.core.sandbox import SandboxManager
 from vacp.core.auth import (
-    AuthService,
-    UserDatabase,
     User,
     UserRole,
     Permission,
@@ -81,22 +74,10 @@ from vacp.core.capabilities import (
     CapabilityGrant,
     CapabilityType,
     CommitmentService,
-    ActionCommitment,
-    create_capability_service,
-    create_commitment_service,
 )
 from vacp.core.containment import (
     ContainmentSystem,
-    SelfModificationController,
     ModificationType,
-    ModificationCommitment,
-    ApprovalStatus,
-    KillSwitch,
-    OutputFilter,
-    ResourceController,
-    ResourceBoundary,
-    CognitiveMonitor,
-    SystemShutdownError,
     MINIMUM_DELAYS,
     REQUIRED_APPROVERS,
 )
@@ -104,10 +85,7 @@ from vacp.core.integrations import IntegrationService
 from vacp.core.tenant import (
     TenantService,
     TenantContext,
-    get_current_tenant,
     set_current_tenant,
-    clear_tenant_context,
-    Tenant,
     TenantStatus,
     TenantPlan,
 )
@@ -116,9 +94,6 @@ from vacp.core.blockchain import (
     is_blockchain_enabled,
 )
 from vacp.core.anchor_scheduler import (
-    AnchorScheduler,
-    AnchorSchedulerConfig,
-    get_anchor_scheduler,
     init_anchor_scheduler,
 )
 
@@ -128,17 +103,12 @@ from vacp.api.models import (
     ReceiptResponse,
     ReceiptInfo,
     ReceiptProof,
-    PolicyBundleRequest,
-    PolicyRuleRequest,
     ApprovalRequest,
     ApprovalInfo,
-    ToolDefinitionRequest,
     TokenMintRequest,
     TokenResponse,
-    AnomalyEventResponse,
     StatsResponse,
     HealthResponse,
-    ErrorResponse,
 )
 
 
@@ -242,7 +212,7 @@ class VACPServer:
         # Create default admin if no users exist
         admin = create_default_admin(self.auth_service)
         if admin:
-            print(f"[Koba] Default admin user created. Check console output above for credentials.")
+            print("[Koba] Default admin user created. Check console output above for credentials.")
 
         # Initialize capability system
         from nacl.signing import SigningKey
@@ -278,11 +248,11 @@ class VACPServer:
         # Initialize ASI containment system
         self.containment = ContainmentSystem(cap_signing_key)
         print("[VACP] ASI Containment System initialized")
-        print(f"  - Self-modification controls: ACTIVE")
-        print(f"  - Kill switch: ARMED (requires 2 keys)")
-        print(f"  - Output filtering: ACTIVE")
-        print(f"  - Cognitive monitoring: ACTIVE")
-        print(f"  - Resource boundaries: ENFORCED")
+        print("  - Self-modification controls: ACTIVE")
+        print("  - Kill switch: ARMED (requires 2 keys)")
+        print("  - Output filtering: ACTIVE")
+        print("  - Cognitive monitoring: ACTIVE")
+        print("  - Resource boundaries: ENFORCED")
 
         # WebSocket manager
         self.ws_manager = ConnectionManager()
@@ -1694,7 +1664,6 @@ def create_app(
         # Count decisions and categories from recent receipts
         decisions: Dict[str, int] = {"allow": 0, "deny": 0, "pending_approval": 0}
         categories: Dict[str, int] = {}
-        recent_activity: List[Dict[str, Any]] = []
 
         max_scan = min(log_size, 200)
         for i in range(max(0, log_size - max_scan), log_size):
@@ -1727,7 +1696,7 @@ def create_app(
         # Basic metrics
         lines.append("# HELP vacp_info VACP server information")
         lines.append("# TYPE vacp_info gauge")
-        lines.append(f'vacp_info{{version="0.1.0"}} 1')
+        lines.append('vacp_info{version="0.1.0"} 1')
 
         # Uptime
         uptime = (datetime.now(timezone.utc) - server.start_time).total_seconds()
@@ -2369,7 +2338,7 @@ def create_app(
             name: str | None - Optional human-readable name
         """
         from vacp.core.normalize import (
-            get_categories, build_tool_patterns,
+            build_tool_patterns,
             build_method_patterns, CATEGORIES,
         )
         body = await request.json()
@@ -2395,10 +2364,6 @@ def create_app(
         # Actions can be: "deny", "require_approval", "read_only", "allow"
         # Or specific methods: "read", "write", "delete", "send", etc.
 
-        policy_decision = PolicyDecision.DENY
-        require_approval = False
-        method_patterns: list = []
-        resource_patterns: list = []
 
         # Classify the actions
         deny_actions = {"deny", "block"}
@@ -4136,7 +4101,7 @@ export default {
 
 # CLI entry point
 def run_server(
-    host: str = "0.0.0.0",
+    host: str = "0.0.0.0",  # nosec B104
     port: int = 8000,
     reload: bool = False,
     demo: bool = False,
@@ -4149,7 +4114,6 @@ def run_server(
         return
 
     # Print startup configuration info
-    import os
     print("\n" + "=" * 60)
     print("VACP Server Starting")
     print("=" * 60)

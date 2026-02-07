@@ -7,8 +7,7 @@ Tests command structure and basic functionality.
 import json
 import os
 import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -21,7 +20,7 @@ except ImportError:
 
 # Try to import the CLI
 try:
-    from vacp.cli.main import cli, get_config_path, save_token, load_token, clear_token
+    from vacp.cli.main import cli, save_token, load_token, clear_token
     CLI_AVAILABLE = True
 except ImportError:
     CLI_AVAILABLE = False

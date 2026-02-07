@@ -10,7 +10,6 @@ Provides secure integration with Anthropic's Claude API including:
 
 import json
 import time
-from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 import logging
 
@@ -345,4 +344,4 @@ class AnthropicProviderWithInterception(AnthropicProvider):
 
 
 # Import at end to avoid circular dependency
-from vacp.providers.interceptor import ToolInterceptor, InterceptionAction
+from vacp.providers.interceptor import ToolInterceptor, InterceptionAction  # noqa: E402

@@ -21,14 +21,12 @@ import hashlib
 import json
 import logging
 import os
-import secrets
-import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 # HTTP clients
 try:
@@ -42,8 +40,6 @@ try:
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
-    import urllib.request
-    import urllib.error
 
 # Hedera SDK
 try:
@@ -53,8 +49,6 @@ try:
         PrivateKey,
         TopicId,
         TopicMessageSubmitTransaction,
-        TopicCreateTransaction,
-        TransactionId,
     )
     HEDERA_SDK_AVAILABLE = True
 except ImportError:
@@ -1314,7 +1308,7 @@ class AnchorService:
         with self.db.get_session() as session:
             total = session.query(BlockchainAnchorModel).count()
             verified = session.query(BlockchainAnchorModel).filter(
-                BlockchainAnchorModel.verified == True
+                BlockchainAnchorModel.verified
             ).count()
 
             by_chain = {}

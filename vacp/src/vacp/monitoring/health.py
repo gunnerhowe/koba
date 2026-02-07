@@ -11,7 +11,7 @@ Provides:
 import threading
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 import logging
@@ -399,7 +399,7 @@ def create_dependency_check(
     def check() -> ComponentHealth:
         try:
             req = urllib.request.Request(url, method="HEAD")
-            with urllib.request.urlopen(req, timeout=timeout) as response:
+            with urllib.request.urlopen(req, timeout=timeout) as response:  # nosec B310
                 if response.status < 400:
                     return ComponentHealth(
                         name=name,

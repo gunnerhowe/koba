@@ -16,7 +16,7 @@ import base64
 import codecs
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional
 import unicodedata
 
 
@@ -380,7 +380,7 @@ class EncodingDetector:
             '6': 'g', '9': 'g',
             '#': 'h',
             '1': 'i', '!': 'i', '|': 'i',
-            '7': 'l', '|_': 'l',
+            '|_': 'l',
             '0': 'o',
             '5': 's', '$': 's',
             '7': 't', '+': 't',

@@ -11,6 +11,7 @@ This is the bridge between how agents name their tools and how
 policies reference categories like "file", "email", "database".
 """
 
+import re
 from typing import Any, Dict, List, Optional, Tuple
 
 
@@ -522,7 +523,16 @@ def _infer_from_name(name: str) -> Tuple[str, Optional[str]]:
         "command": "system", "process": "system", "python": "system",
     }
 
-    parts = name.replace("-", "_").split("_")
+    # Split on underscores and hyphens (traditional tool names like
+    # "read_file").  Also split on dots, but only for simple two-segment
+    # names (e.g., "database.read") -- multi-segment dotted names like
+    # "root.admin.delete" should not have methods extracted from inner
+    # segments to avoid false matches.
+    lowered = name.lower()
+    if "." in lowered and lowered.count(".") == 1 and "_" not in lowered and "-" not in lowered:
+        parts = lowered.split(".")
+    else:
+        parts = re.split(r'[_\-]', lowered)
 
     detected_category = None
     detected_method = None

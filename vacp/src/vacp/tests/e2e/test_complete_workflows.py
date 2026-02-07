@@ -12,9 +12,7 @@ Tests complete user scenarios from start to finish:
 
 import pytest
 import tempfile
-import time
 from pathlib import Path
-from datetime import datetime, timezone
 
 
 try:
@@ -114,9 +112,9 @@ class TestAgentOnboardingWorkflow:
 
         if key_response.status_code == 200:
             key_data = key_response.json()
-            api_key = key_data.get("key") or key_data.get("api_key")
+            key_data.get("key") or key_data.get("api_key")
         else:
-            api_key = None  # May already exist
+            pass  # May already exist
 
         # Step 3: List available tools
         tools_response = e2e_client.get("/v1/tools/catalog")
@@ -234,7 +232,7 @@ class TestAuditTrailWorkflow:
             headers=admin_headers
         )
         assert entries_response.status_code == 200
-        entries = entries_response.json().get("entries", [])
+        entries_response.json().get("entries", [])
 
         # Step 3: Get audit tree head
         tree_head_response = e2e_client.get(

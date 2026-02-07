@@ -21,7 +21,7 @@ import os
 import json
 import hashlib
 import functools
-from typing import Any, Optional, Callable, Dict, List, Tuple
+from typing import Any, Optional, Callable, Dict, Tuple
 from datetime import datetime
 
 # Default Koba server
@@ -108,9 +108,9 @@ class KobaClient:
         self._wrapped = wrapped_client
         self._koba_url = koba_url.rstrip("/")
         self._api_key = api_key
-        self._agent_id = agent_id or f"agent_{hashlib.md5(str(id(wrapped_client)).encode()).hexdigest()[:8]}"
+        self._agent_id = agent_id or f"agent_{hashlib.md5(str(id(wrapped_client)).encode(), usedforsecurity=False).hexdigest()[:8]}"
         self._tenant_id = tenant_id or "default"
-        self._session_id = hashlib.md5(f"{datetime.now().isoformat()}{id(self)}".encode()).hexdigest()[:16]
+        self._session_id = hashlib.md5(f"{datetime.now().isoformat()}{id(self)}".encode(), usedforsecurity=False).hexdigest()[:16]
         self._auto_approve_low_risk = auto_approve_low_risk
         self._token = None
 

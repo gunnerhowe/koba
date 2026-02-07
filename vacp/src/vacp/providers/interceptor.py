@@ -8,10 +8,9 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
-import json
 import logging
 
-from vacp.providers.base import ToolCall, ToolResult, CompletionResponse, Message, MessageRole
+from vacp.providers.base import ToolCall, CompletionResponse, Message
 from vacp.core.policy import PolicyEngine, PolicyDecision, PolicyEvaluationContext, PolicyEvaluationResult
 from vacp.security.injection_detection import PromptInjectionDetector
 from vacp.security.sanitizer import InputSanitizer, SanitizationAction

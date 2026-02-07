@@ -8,7 +8,7 @@ import logging
 import sys
 import json
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 try:
     import structlog

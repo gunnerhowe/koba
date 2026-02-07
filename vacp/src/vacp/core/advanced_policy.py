@@ -12,7 +12,7 @@ Provides enhanced policy matching beyond simple glob patterns:
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
 from datetime import datetime, timezone, timedelta
 

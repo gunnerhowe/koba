@@ -15,8 +15,8 @@ import json
 import secrets
 import base64
 from dataclasses import dataclass
-from typing import Union, Any, Optional
-from datetime import datetime, timezone
+from typing import Any
+from datetime import datetime
 
 # We use pure Python implementations for portability
 # In production, PyNaCl or cryptography library would be preferred

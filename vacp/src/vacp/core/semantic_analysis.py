@@ -10,11 +10,10 @@ instead of "read the data" to evade detection.
 """
 
 import re
-import math
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 from collections import defaultdict
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 
 # Semantic word groups - words that have similar meaning

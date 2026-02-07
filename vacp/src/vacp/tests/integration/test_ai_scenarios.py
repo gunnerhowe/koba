@@ -8,11 +8,9 @@ Total Scenarios: 3,240+ across 25 categories
 """
 
 import pytest
-from datetime import datetime, timezone, timedelta
-from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional, Set
+from dataclasses import dataclass
+from typing import List, Dict, Optional, Set
 from enum import Enum
-import re
 
 from nacl.signing import SigningKey
 
@@ -26,8 +24,7 @@ from vacp.core.policy import (
     PolicyEvaluationContext,
     create_default_bundle,
 )
-from vacp.core.gateway import create_gateway, ToolRequest
-from vacp.core.registry import ToolDefinition, ToolCategory
+from vacp.core.gateway import create_gateway
 from vacp.core.containment import (
     ContainmentSystem,
     KillSwitch,

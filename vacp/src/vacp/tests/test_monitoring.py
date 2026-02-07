@@ -11,14 +11,13 @@ import pytest
 import time
 import threading
 from datetime import datetime, timezone, timedelta
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from vacp.monitoring.metrics import (
     Counter,
     Gauge,
     Histogram,
     MetricType,
-    MetricSample,
     MetricsCollector,
     get_collector,
     reset_collector,
@@ -1050,7 +1049,7 @@ class TestMonitoringIntegration:
     def test_metrics_and_alerts_integration(self):
         """Test metrics feeding into alerts."""
         collector = get_collector()
-        manager = AlertManager()
+        AlertManager()
 
         # Create alert rule for injection attempts
         # Already has default rules, but let's verify they work

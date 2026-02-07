@@ -14,7 +14,7 @@ Each test represents a real attack vector that a malicious AI might attempt.
 import pytest
 from vacp.core.semantic_analysis import SemanticAnalyzer, EnhancedCognitiveMonitor, BehaviorAnalyzer
 from vacp.security.injection_detection import PromptInjectionDetector, JailbreakDetector, InjectionSeverity
-from vacp.security.encoding_detector import EncodingDetector, ObfuscationType
+from vacp.security.encoding_detector import EncodingDetector
 from vacp.security.sanitizer import InputSanitizer, OutputValidator, SanitizationAction
 
 
@@ -338,7 +338,6 @@ class TestBehavioralBypassAttempts:
 
     def test_rapid_action_sequence_detected(self):
         """Test that rapid action sequences are flagged."""
-        from datetime import datetime, timezone, timedelta
 
         agent_id = "test_agent"
 

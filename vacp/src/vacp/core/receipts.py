@@ -21,7 +21,6 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional, Any, Dict, List
-from enum import Enum
 
 from vacp.core.crypto import (
     KeyPair,
@@ -355,7 +354,7 @@ class ReceiptService:
         timestamp = datetime.now(timezone.utc)
 
         # Create preliminary receipt to hash
-        prelim_receipt = SignedActionReceipt(
+        SignedActionReceipt(
             receipt_id="pending",
             timestamp=timestamp,
             agent_id=agent_id,

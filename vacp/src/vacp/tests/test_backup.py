@@ -10,17 +10,11 @@ Comprehensive tests covering:
 - Retention and cleanup
 """
 
-import asyncio
-import gzip
-import hashlib
-import json
-import os
 import secrets
 import shutil
 import tempfile
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest

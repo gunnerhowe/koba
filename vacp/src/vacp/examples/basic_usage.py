@@ -197,7 +197,7 @@ async def main():
         if not response.success:
             print(f"   Reason: {response.error}")
     except ApprovalRequiredError as e:
-        print(f"   Result: [X] Requires approval (as expected)")
+        print("   Result: [X] Requires approval (as expected)")
         print(f"   Approval ID: {e.approval_id}")
 
     # Test 3: Admin operation (should be denied)

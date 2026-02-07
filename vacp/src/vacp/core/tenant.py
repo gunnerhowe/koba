@@ -11,7 +11,6 @@ Provides:
 import json
 import re
 import secrets
-import hashlib
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
@@ -25,7 +24,7 @@ from .database import (
 )
 
 if SQLALCHEMY_AVAILABLE:
-    from sqlalchemy.orm import Session as SQLASession
+    pass
 
 
 # ============================================================================

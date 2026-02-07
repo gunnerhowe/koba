@@ -9,20 +9,18 @@ Production-ready audit log management with:
 - Compression and encryption
 """
 
-import asyncio
 import csv
 import gzip
 import hashlib
 import io
 import json
-import os
 import secrets
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, AsyncGenerator, Callable, Dict, Iterator, List, Optional, Tuple
+from typing import Any, AsyncGenerator, Callable, Dict, List, Optional
 
 try:
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -125,9 +123,9 @@ class AuditEntry:
             f"dhost={self.resource_type}:{self.resource_id}",
             f"rt={int(self.timestamp.timestamp() * 1000)}",
             f"cs1={self.tenant_id}",
-            f"cs1Label=TenantID",
+            "cs1Label=TenantID",
             f"cs2={self.correlation_id or ''}",
-            f"cs2Label=CorrelationID",
+            "cs2Label=CorrelationID",
         ])
 
         return f"CEF:0|VACP|AuditLog|1.0|{self.entry_id}|{self.action}|{severity}|{extension}"

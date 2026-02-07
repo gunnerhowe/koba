@@ -9,7 +9,7 @@ Provides:
 
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
 
 from vacp.security.injection_detection import PromptInjectionDetector, InjectionSeverity

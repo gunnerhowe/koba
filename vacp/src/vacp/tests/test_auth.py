@@ -7,27 +7,21 @@ Tests cover:
 - Session management
 """
 
-import time
 from datetime import datetime, timezone, timedelta
 
 import pytest
 
 from vacp.auth.api_keys import (
     APIKeyManager,
-    APIKey,
     APIKeyScope,
-    APIKeyValidationResult,
 )
 from vacp.auth.rbac import (
     RBACManager,
-    Role,
     Permission,
     PermissionSet,
-    SYSTEM_ROLES,
 )
 from vacp.auth.sessions import (
     SessionManager,
-    Session,
     SessionStatus,
 )
 
@@ -452,7 +446,7 @@ class TestSessionManager:
         # Create sessions up to the limit
         sessions = []
         for i in range(3):
-            session = manager.create_session(f"user-1", "user")
+            session = manager.create_session("user-1", "user")
             sessions.append(session)
 
         # All should be active

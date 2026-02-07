@@ -17,7 +17,6 @@ import os
 import threading
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
 
 from nacl.signing import SigningKey
 
@@ -27,8 +26,6 @@ from vacp.core.kill_switch import (
     ActivationChannel,
     DeadManConfig,
     FailsafeConfig,
-    KeyHolder,
-    ActivationRecord,
     SystemShutdownError,
     DistributedKillSwitch,
 )

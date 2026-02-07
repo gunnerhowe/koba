@@ -42,7 +42,6 @@ These controls rely on mathematical hardness guarantees:
 - Multi-party signatures require actual key holders
 """
 
-import hashlib
 import json
 import time
 import threading
@@ -50,7 +49,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional, Set, Tuple, Callable
 from enum import Enum
-from abc import ABC, abstractmethod
 
 from nacl.signing import SigningKey, VerifyKey
 from nacl.exceptions import BadSignatureError
@@ -533,7 +531,7 @@ class KillSwitch:
         }
 
 
-from vacp.core.kill_switch import SystemShutdownError
+from vacp.core.kill_switch import SystemShutdownError  # noqa: E402
 
 
 @dataclass

@@ -10,7 +10,6 @@ These tests verify that the ASI containment controls ACTUALLY work:
 
 import pytest
 import time
-from datetime import datetime, timezone, timedelta
 
 from nacl.signing import SigningKey
 

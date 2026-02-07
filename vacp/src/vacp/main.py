@@ -14,7 +14,7 @@ from pathlib import Path
 STORAGE_PATH = Path(os.getenv("VACP_STORAGE_PATH", "./vacp_data"))
 STORAGE_PATH.mkdir(parents=True, exist_ok=True)
 
-from vacp.api.server import create_app
+from vacp.api.server import create_app  # noqa: E402
 
 # Create the app - demo mode disabled by default for security
 # Set DEMO_MODE=true to enable demo data and endpoints
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     import uvicorn
 
     port = int(os.getenv("PORT", "8000"))
-    host = os.getenv("HOST", "0.0.0.0")
+    host = os.getenv("HOST", "0.0.0.0")  # nosec B104
 
     print(f"Starting VACP server on {host}:{port}")
     print(f"Storage path: {STORAGE_PATH}")

@@ -15,7 +15,6 @@ that might be missed by traditional unit tests.
 import pytest
 import string
 import random
-from typing import List
 
 # Try to import Hypothesis for property-based testing
 try:
@@ -128,7 +127,7 @@ class TestInjectionDetectionFuzzing:
     def test_known_injection_payloads(self, detector):
         """Test that known injection payloads are detected."""
         for payload in INJECTION_PAYLOADS:
-            attempts = detector.detect(payload)
+            detector.detect(payload)
             # At least some known payloads should trigger detection
             # This is a sanity check, not all payloads will match all patterns
 
@@ -140,7 +139,7 @@ class TestInjectionDetectionFuzzing:
             try:
                 encoded = encoding_fn(base_payload)
                 # Pattern detector
-                attempts = detector.detect(encoded)
+                detector.detect(encoded)
                 # ML detector for variants pattern doesn't catch
                 is_safe, _ = ml_detector.is_safe(encoded)
             except Exception:
@@ -335,12 +334,12 @@ class TestAuthenticationFuzzing:
         """Test email validation with fuzzed inputs."""
         # Registration should either succeed with valid email or fail gracefully
         try:
-            result = auth_service.register(
+            auth_service.register(
                 email=email,
                 username="testuser",
                 password="ValidPassword123!",
             )
-        except (ValueError, Exception) as e:
+        except (ValueError, Exception):
             # Should fail gracefully with validation error
             pass
 
@@ -349,12 +348,12 @@ class TestAuthenticationFuzzing:
     def test_password_fuzzing(self, auth_service, password):
         """Test password handling with fuzzed inputs."""
         try:
-            result = auth_service.register(
+            auth_service.register(
                 email="test@test.com",
                 username="testuser",
                 password=password,
             )
-        except (ValueError, Exception) as e:
+        except (ValueError, Exception):
             # Should fail gracefully
             pass
 

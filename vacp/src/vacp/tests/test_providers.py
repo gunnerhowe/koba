@@ -9,13 +9,11 @@ Tests cover:
 """
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 
 from vacp.providers.base import (
-    AIProvider,
     ProviderConfig,
     ToolCall,
-    ToolResult,
     ToolDefinition,
     Message,
     MessageRole,
@@ -23,12 +21,9 @@ from vacp.providers.base import (
     CompletionResponse,
     UsageStats,
     MockProvider,
-    ProviderError,
-    RateLimitError,
 )
 from vacp.providers.interceptor import (
     ToolInterceptor,
-    InterceptionResult,
     InterceptionAction,
     ResponseValidator,
 )

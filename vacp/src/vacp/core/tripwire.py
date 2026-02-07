@@ -22,9 +22,9 @@ import math
 import random
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 import hashlib
 
 from vacp.core.crypto import generate_random_id
@@ -230,7 +230,7 @@ class EchoStateNetwork:
             return
 
         # Simple ridge regression
-        n = len(self._training_states)
+        len(self._training_states)
         d = self.reservoir_size
         out_dim = len(self._training_targets[0])
 

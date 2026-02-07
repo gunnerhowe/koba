@@ -13,7 +13,7 @@ import os
 import pytest
 import time
 from datetime import datetime, timezone, timedelta
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import MagicMock, patch
 
 from vacp.core.vault import (
     VaultConfig,
@@ -24,7 +24,6 @@ from vacp.core.vault import (
     SecretsManager,
     get_secrets_manager,
     get_secret,
-    set_secret,
 )
 
 

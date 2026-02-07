@@ -8,13 +8,12 @@ Provides:
 """
 
 import asyncio
-import os
 import sys
 import pytest
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import AsyncGenerator, Generator
+from typing import Generator
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -268,7 +267,7 @@ def mock_hedera_service():
 def test_app(temp_dir, test_keypair):
     """Create a test FastAPI application."""
     try:
-        from fastapi.testclient import TestClient
+        from fastapi.testclient import TestClient  # noqa: F401
         from vacp.api.server import create_app
 
         app = create_app(

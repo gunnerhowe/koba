@@ -31,12 +31,10 @@ Provides multiple redundant mechanisms to ensure AI can always be stopped:
    - Any node can trigger global shutdown
 """
 
-import hashlib
 import json
 import os
 import signal
 import threading
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from enum import Enum
@@ -47,7 +45,7 @@ import logging
 from nacl.signing import SigningKey, VerifyKey
 from nacl.exceptions import BadSignatureError
 
-from vacp.core.crypto import hash_json, generate_random_id
+from vacp.core.crypto import generate_random_id
 
 logger = logging.getLogger(__name__)
 

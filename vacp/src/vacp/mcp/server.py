@@ -29,24 +29,18 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Callable, Awaitable
 
 from vacp.core.gateway import (
-    ToolGateway,
     ToolRequest,
-    ToolResponse,
     create_gateway,
     ApprovalRequiredError,
     PolicyDeniedError,
 )
 from vacp.core.registry import (
-    ToolRegistry,
     ToolDefinition,
     ToolSchema,
     ParameterSchema,
     ToolCategory,
     ToolRiskLevel,
 )
-from vacp.core.policy import PolicyEngine, PolicyBundle, PolicyRule, PolicyDecision
-from vacp.core.receipts import ReceiptService
-from vacp.core.merkle import AuditableLog
 
 
 class VACPMCPServer:

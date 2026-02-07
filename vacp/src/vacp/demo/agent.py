@@ -6,7 +6,6 @@ Demonstrates the containment system in action.
 """
 
 import asyncio
-import json
 import time
 from dataclasses import dataclass
 from enum import Enum
@@ -399,7 +398,7 @@ async def run_demo(api_base: str = "http://localhost:8000", verbose: bool = True
         if result.get("detected"):
             print(f"  Result: 🚨 DECEPTION DETECTED - Tripwires: {result['tripwires_triggered']}")
         else:
-            print(f"  Result: ✅ No deception detected")
+            print("  Result: ✅ No deception detected")
 
         await asyncio.sleep(0.5)
 

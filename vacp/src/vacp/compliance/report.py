@@ -116,7 +116,7 @@ class ComplianceReport:
         if self.signature:
             lines.append("## Cryptographic Signature")
             lines.append("")
-            lines.append(f"```")
+            lines.append("```")
             lines.append(self.signature)
             lines.append("```")
             lines.append("")

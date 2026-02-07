@@ -18,8 +18,7 @@ import json
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple, Union
-from enum import Enum
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from vacp.core.crypto import hash_json, generate_random_id, KeyPair
 from vacp.core.policy import (
@@ -31,15 +30,14 @@ from vacp.core.policy import (
 from vacp.core.receipts import (
     SignedActionReceipt,
     ReceiptService,
-    ToolInfo,
     PolicyInfo,
     SandboxInfo,
     ConstraintsApplied,
     create_tool_info,
 )
 from vacp.core.merkle import MerkleLog, AuditableLog
-from vacp.core.registry import ToolRegistry, ToolDefinition
-from vacp.core.normalize import normalize_tool_name, extract_resource
+from vacp.core.registry import ToolRegistry
+from vacp.core.normalize import normalize_tool_name
 
 
 class GatewayError(Exception):
@@ -560,7 +558,7 @@ class ToolGateway:
                 execution_time_ms=elapsed,
             )
 
-        except Exception as e:
+        except Exception:
             self._stats["errors"] += 1
             import logging
             logging.getLogger("vacp.gateway").exception(

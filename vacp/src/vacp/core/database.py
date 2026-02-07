@@ -11,8 +11,8 @@ Provides:
 import os
 import json
 import secrets
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Type, TypeVar
+from datetime import datetime
+from typing import Any, Dict, List, Optional, TypeVar
 from dataclasses import dataclass, field
 from enum import Enum
 from contextlib import contextmanager
@@ -21,10 +21,10 @@ from contextlib import contextmanager
 try:
     from sqlalchemy import (
         create_engine, Column, String, Integer, Boolean, Text, DateTime,
-        ForeignKey, Index, JSON, Float, Enum as SQLEnum, event
+        ForeignKey, Index,
     )
     from sqlalchemy.orm import (
-        sessionmaker, Session as SQLASession, relationship, declarative_base
+        sessionmaker, relationship, declarative_base
     )
     from sqlalchemy.pool import QueuePool, StaticPool
     SQLALCHEMY_AVAILABLE = True

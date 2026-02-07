@@ -5,9 +5,8 @@ Tests for cryptographic primitives, receipts, policy, and gateway.
 """
 
 import asyncio
-import json
 import unittest
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 from vacp.core.crypto import (
     generate_keypair,
@@ -16,28 +15,19 @@ from vacp.core.crypto import (
     hash_data,
     hash_json,
     canonicalize_json,
-    KeyPair,
 )
 from vacp.core.receipts import (
     SignedActionReceipt,
     ReceiptService,
     ToolInfo,
     PolicyInfo,
-    LogInfo,
     PolicyDecision,
-    create_tool_info,
 )
 from vacp.core.merkle import (
     MerkleLog,
-    AuditableLog,
-    MerkleProof,
-    leaf_hash,
-    internal_hash,
 )
 from vacp.core.policy import (
     PolicyEngine,
-    PolicyBundle,
-    PolicyRule,
     PolicyEvaluationContext,
     Budget,
     RateLimit,
@@ -49,10 +39,8 @@ from vacp.core.registry import (
     ToolSchema,
     ParameterSchema,
     ToolCategory,
-    ToolRiskLevel,
 )
 from vacp.core.gateway import (
-    ToolGateway,
     ToolRequest,
     create_gateway,
 )
@@ -60,13 +48,9 @@ from vacp.core.tokens import (
     TokenService,
     TokenMintRequest,
     TokenScope,
-    TokenType,
 )
 from vacp.core.tripwire import (
     TripwireEngine,
-    SequenceAnalyzer,
-    ActionEvent,
-    AnomalyType,
     TripwireAction,
 )
 
@@ -597,8 +581,7 @@ class TestTripwire(unittest.TestCase):
     def test_high_rate_detection(self):
         """Test that high action rates are detected."""
         # Simulate rapid actions (may trigger rate anomaly)
-        from datetime import datetime, timezone
-        now = datetime.now(timezone.utc)
+        datetime.now(timezone.utc)
 
         for i in range(20):
             allowed, anomalies, action = self.tripwire.analyze_action(

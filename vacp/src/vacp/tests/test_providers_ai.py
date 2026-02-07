@@ -6,20 +6,15 @@ Tests focus on the non-API-calling functionality to avoid external dependencies.
 """
 
 import pytest
-from unittest.mock import Mock, MagicMock, patch
-from datetime import datetime, timezone
 
 from vacp.providers.base import (
     ProviderConfig,
     Message,
     MessageRole,
     CompletionRequest,
-    CompletionResponse,
     UsageStats,
     ToolCall,
     ToolDefinition,
-    ProviderError,
-    RateLimitError,
 )
 
 

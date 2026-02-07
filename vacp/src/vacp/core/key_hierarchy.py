@@ -27,28 +27,22 @@ Key Derivation uses HKDF (HMAC-based Key Derivation Function)
 with SHA-256 for deterministic, secure key expansion.
 """
 
-import base64
 import hashlib
 import hmac
 import json
-import os
 import secrets
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 from vacp.core.crypto import (
     KeyPair,
     generate_keypair,
     sign_message,
-    verify_signature,
     encode_public_key,
-    decode_public_key,
     encode_signature,
-    decode_signature,
 )
 
 # Try to import cryptography for HKDF
@@ -552,7 +546,7 @@ class KeyHierarchy:
                 data = json.loads(meta_file.read_text())
                 metadata = KeyMetadata.from_dict(data)
                 self._key_metadata[metadata.key_id] = metadata
-            except Exception as e:
+            except Exception:
                 # Log but continue
                 pass
 

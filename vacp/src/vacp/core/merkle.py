@@ -15,7 +15,7 @@ provides the foundation for verifiable audit trails.
 
 import hashlib
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import List, Optional, Any, Dict, Tuple, TYPE_CHECKING
 from pathlib import Path
@@ -31,7 +31,6 @@ from vacp.core.crypto import (
     decode_signature,
     encode_public_key,
     decode_public_key,
-    hash_data,
 )
 
 
@@ -666,7 +665,6 @@ class AuditableLog:
 
     def append_receipt(self, receipt: "SignedActionReceipt") -> int:
         """Append a receipt and return its log index."""
-        from vacp.core.receipts import SignedActionReceipt
 
         entry = receipt.to_json().encode("utf-8")
         index = self.log.append(entry)

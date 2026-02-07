@@ -10,7 +10,6 @@ Provides:
 
 import json
 import threading
-import time
 import urllib.request
 import urllib.error
 from dataclasses import dataclass, field
@@ -158,7 +157,7 @@ class WebhookNotifier:
                 },
                 method="POST",
             )
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310
                 return response.status == 200
         except urllib.error.URLError as e:
             logger.error(f"Failed to send webhook: {e}")

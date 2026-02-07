@@ -7,13 +7,12 @@ Uses only standard library for minimal dependencies.
 
 import html
 import json
-from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from typing import Any, Dict, List, Optional
+from typing import Optional
 from urllib.parse import parse_qs, urlparse
 
-from vacp.core.receipts import SignedActionReceipt, ReceiptService
-from vacp.core.merkle import AuditableLog, MerkleLog, MerkleProof
+from vacp.core.receipts import ReceiptService
+from vacp.core.merkle import AuditableLog
 from vacp.core.policy import PolicyEngine
 
 
