@@ -412,9 +412,9 @@ class TestAuthEndpoints:
 class TestToolExecution:
     """Tests for tool execution endpoints."""
 
-    def test_get_tool_catalog(self, client):
+    def test_get_tool_catalog(self, client, auth_headers):
         """Test getting tool catalog."""
-        response = client.get("/v1/tools/catalog")
+        response = client.get("/v1/tools/catalog", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert "tools" in data
@@ -627,9 +627,9 @@ class TestTokenEndpoints:
 class TestStatsEndpoint:
     """Tests for statistics endpoint."""
 
-    def test_get_stats(self, client):
+    def test_get_stats(self, client, auth_headers):
         """Test getting server statistics."""
-        response = client.get("/stats")
+        response = client.get("/stats", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert "gateway" in data

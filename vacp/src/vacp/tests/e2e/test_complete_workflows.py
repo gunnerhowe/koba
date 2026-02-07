@@ -117,7 +117,7 @@ class TestAgentOnboardingWorkflow:
             pass  # May already exist
 
         # Step 3: List available tools
-        tools_response = e2e_client.get("/v1/tools/catalog")
+        tools_response = e2e_client.get("/v1/tools/catalog", headers=admin_headers)
         assert tools_response.status_code == 200
         tools = tools_response.json().get("tools", [])
         assert len(tools) > 0
@@ -451,7 +451,7 @@ class TestMetricsAndHealth:
         assert "vacp_" in metrics_response.text
 
         # Step 5: Stats endpoint
-        stats_response = e2e_client.get("/stats")
+        stats_response = e2e_client.get("/stats", headers=admin_headers)
         assert stats_response.status_code == 200
         stats = stats_response.json()
         assert "gateway" in stats
@@ -509,7 +509,7 @@ class TestCompleteUserJourney:
         assert me_response.status_code == 200
 
         # Step 2: View available tools
-        tools_response = e2e_client.get("/v1/tools/catalog")
+        tools_response = e2e_client.get("/v1/tools/catalog", headers=admin_headers)
         assert tools_response.status_code == 200
         tools = tools_response.json().get("tools", [])
         assert len(tools) > 0

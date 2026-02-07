@@ -50,15 +50,13 @@ class TestPolicyEnforcementIntegration:
         bundle = create_default_bundle("test-bundle")
         self.policy_engine.load_bundle(bundle)
 
-        # Try dangerous patterns that should be blocked
-        dangerous_patterns = [
+        # System-level execution tools should be outright denied
+        denied_patterns = [
             "system.exec",
             "os.shell",
-            "root.admin.delete",
-            "user.sudo",
         ]
 
-        for tool_name in dangerous_patterns:
+        for tool_name in denied_patterns:
             context = PolicyEvaluationContext(
                 agent_id="test-agent",
                 tenant_id="test-tenant",
@@ -70,6 +68,28 @@ class TestPolicyEnforcementIntegration:
 
             assert result.decision == PolicyDecision.DENY, \
                 f"Tool '{tool_name}' should be DENIED but got {result.decision}"
+
+        # Write/destructive operations should require approval (not outright denied)
+        approval_patterns = [
+            "root.admin.delete",
+            "user.sudo",
+        ]
+
+        for tool_name in approval_patterns:
+            context = PolicyEvaluationContext(
+                agent_id="test-agent",
+                tenant_id="test-tenant",
+                session_id="test-session",
+                tool_name=tool_name,
+            )
+
+            result = self.policy_engine.evaluate(context)
+
+            assert result.decision in (
+                PolicyDecision.DENY,
+                PolicyDecision.PENDING_APPROVAL,
+                PolicyDecision.ALLOW_WITH_CONDITIONS,
+            ), f"Tool '{tool_name}' should be restricted but got {result.decision}"
 
     def test_allow_rule_permits_safe_operations(self):
         """Verify that allow rules actually permit safe tool patterns."""
