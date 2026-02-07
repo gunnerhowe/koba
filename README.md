@@ -90,6 +90,18 @@ Every tool call produces a cryptographically signed receipt containing:
 - Never embedded in prompts
 - Automatic revocation
 
+## Download
+
+> **No coding required.** Just download, install, and run.
+
+| Platform | Download |
+|----------|----------|
+| **Windows** | [**Download Koba Installer (.exe)**](https://github.com/gunnerhowe/koba/releases/latest) |
+| **macOS** | Coming soon |
+| **Linux** | Coming soon |
+
+The desktop app includes everything - the backend, dashboard, and Docker setup are all bundled in.
+
 ## Quick Start
 
 ### Installation

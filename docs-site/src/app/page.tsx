@@ -1,8 +1,10 @@
 import Image from "next/image";
 
 const GITHUB_URL = "https://github.com/gunnerhowe/koba";
+const DOWNLOAD_URL =
+  "https://github.com/gunnerhowe/koba/releases/latest";
 const WHITEPAPER_URL =
-  "https://github.com/gunnerhowe/koba/blob/main/docs/whitepaper.md";
+  "https://github.com/gunnerhowe/koba/blob/main/WHITEPAPER_KOBA_ASI_CONTAINMENT.md";
 
 /* ------------------------------------------------------------------ */
 /*  SVG Icons (inline, no external deps)                              */
@@ -287,13 +289,24 @@ export default function Home() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
+              href={DOWNLOAD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-8 py-4 text-lg font-semibold text-white transition hover:bg-green-500"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download for Windows
+            </a>
+            <a
               href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500"
             >
               <IconGitHub />
-              Get Started
+              View on GitHub
             </a>
             <a
               href={WHITEPAPER_URL}
@@ -304,6 +317,10 @@ export default function Home() {
               Read the Whitepaper
             </a>
           </div>
+
+          <p className="mt-6 text-sm text-gray-500">
+            No coding required. Download, install, and run. macOS &amp; Linux coming soon.
+          </p>
 
           <p className="mt-12 text-base italic text-gray-500">
             &ldquo;Cognition can be wild; action cannot.&rdquo;
@@ -525,18 +542,28 @@ python -m vacp.api.server`}</code>
             Ready to bring independent oversight to your AI?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-gray-400">
-            Koba is open source and MIT licensed. Start integrating
-            cryptographic governance into your AI agent pipeline today.
+            Koba is free, open source, and MIT licensed. No coding required &mdash; just download and install.
           </p>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href={DOWNLOAD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-8 py-4 text-lg font-semibold text-white transition hover:bg-green-500"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download for Windows
+            </a>
             <a
               href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition hover:bg-blue-500"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-6 py-3 font-semibold transition hover:border-gray-500 hover:bg-gray-900"
             >
-              <IconGitHub className="w-6 h-6" />
-              View on GitHub
+              <IconGitHub className="w-5 h-5" />
+              View Source on GitHub
             </a>
           </div>
         </div>
